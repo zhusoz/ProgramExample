@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>MyToDo</id>
+    <version>1.0.0</version>
+    <authors>MyToDo</authors>
+    <description>Package Description</description>
+    <dependencies>
+      <group targetFramework="net6.0-windows7.0">
+        <dependency id="MyToDo.Shared" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="MaterialDesignThemes" version="4.6.1" exclude="Build,Analyzers" />
+        <dependency id="Prism.DryIoc" version="8.1.97" exclude="Build,Analyzers" />
+        <dependency id="RestSharp" version="108.0.3" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework="net6.0-windows7.0">
+        <frameworkReference name="Microsoft.WindowsDesktop.App.WPF" />
+      </group>
+    </frameworkReferences>
+    <contentFiles>
+      <files include="any/net6.0-windows7.0/favicon.ico" buildAction="Content" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src="E:\TestDemo\review\MyToDo\MyToDo\bin\Debug\net6.0-windows\MyToDo.runtimeconfig.json" target="lib\net6.0-windows7.0\MyToDo.runtimeconfig.json" />
+    <file src="E:\TestDemo\review\MyToDo\MyToDo\bin\Debug\net6.0-windows\MyToDo.dll" target="lib\net6.0-windows7.0\MyToDo.dll" />
+    <file src="E:\TestDemo\review\MyToDo\MyToDo\favicon.ico" target="content\favicon.ico" />
+    <file src="E:\TestDemo\review\MyToDo\MyToDo\favicon.ico" target="contentFiles\any\net6.0-windows7.0\favicon.ico" />
+  </files>
+</package>

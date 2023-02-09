@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>E:\TestDemo\review\MyToDo\MyToDo.Api\bin\Release\net6.0\publish\</_PublishTargetUrl>
+    <History>True|2023-02-03T08:18:51.5774461Z;True|2023-02-03T16:17:19.7353782+08:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="MyToDoConnection">
+      <Value>Data Source=MyToDo.db</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,81 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Models;
+using NPOI.HPSF;
+using ProblemDisposal.Common.Basic;
+using ProgramsNetCore.Common;
+using ProgramsNetCore.IService;
+using ProgramsNetCore.Models.Dto.RepairOrderDto;
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Claims;
+using System.Threading.Tasks;
+
+namespace DataSharing.Controllers
+{
+    /// <summary>
+    /// 工单
+    /// </summary>
+    [Route("")]
+    [ApiController]
+    public class RepairOrderController : ControllerBase 
+    {
+        private readonly IDataTableService _dtService;
+        private readonly IPublicTaskService _ptService;
+        private readonly IRepairOrderService _poService;
+        private readonly IMapper _map;
+        private readonly IProcessService _prcService;
+        private readonly IOrderProcessInfoService _opiService;
+        private readonly HttpContext _context;
+        public RepairOrderController(IDataTableService dtService,IPublicTaskService ptService,IRepairOrderService poService,IMapper map,IProcessService prcService,IOrderProcessInfoService opiService)
+        {
+            _dtService = dtService;
+            _ptService = ptService;
+            _poService = poService;
+            _map = map;
+            _prcService = prcService;
+            _opiService = opiService;
+        }
+
+        /// <summary>
+        /// 添加工单
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<AjaxResult<string>> AddRepairOrder(AddRepairOrderDto dto)
+        {
+            var userid = (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value).ToInt32();
+            if (userid <= 0) return new AjaxResult<string>(false);
+            var orderno ="jworder"+ userid + DateTime.Now.ToString("yyMMddHHmmss");
+            var insertentity = _map.Map<repair_order>(dto);
+            var nowtime = DateTime.Now;
+            insertentity.StartTime=nowtime;
+            insertentity.Number = orderno;
+            var result = await _poService.IdAdd(insertentity);
+            if (result <= 0) return new AjaxResult<string>(false);
+            var taskid= await _ptService.IdAdd(new public_task { TaskType=4, StartTime=nowtime, Status=1, InfoRelation=result });
+          var processid= await _prcService.IdAdd(new process {  CreateTime= nowtime, Describe="工单申请", Status=0, TaskId=taskid , UserId= userid });
+         await   _opiService.Add(new order_processinfo {  Opinion=dto.Opinion, ProcessId=processid});
+           await _ptService.UpdateColumn(new public_task { Id = taskid, CurrentProcess = processid }, i =>new  { i.CurrentProcess });
+
+            return new AjaxResult<string>();
+        }
+
+        /// <summary>
+        /// 获取工单等级
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<AjaxResult<List<ReturnOrderLevelDto>>> GetOrderLevel()
+        {
+            string sql = "  select CONVERT(dict_value,SIGNED)  Id,dict_info levelname,remarks level from public_dict where dict_key='order_priority' order by dict_value";
+            var result = await _dtService.GetEntityList<ReturnOrderLevelDto>(sql);
+            return new AjaxResult<List<ReturnOrderLevelDto>>(result);
+        }
+
+
+    }
+}

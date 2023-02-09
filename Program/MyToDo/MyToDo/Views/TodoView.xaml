@@ -1,0 +1,200 @@
+﻿<UserControl
+    x:Class="MyToDo.Views.TodoView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cv="clr-namespace:MyToDo.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:MyToDo.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <cv:IntToVisibleConverter x:Key="IntToVisibleConverter" />
+    </UserControl.Resources>
+    <md:DialogHost>
+        <md:DrawerHost IsRightDrawerOpen="{Binding IsRightDrawerOpened}">
+            <md:DrawerHost.RightDrawerContent>
+                <DockPanel
+                    MinWidth="220"
+                    Margin="20"
+                    LastChildFill="False">
+                    <TextBlock
+                        DockPanel.Dock="Top"
+                        FontSize="22"
+                        Text="添加待办" />
+                    <StackPanel
+                        Margin="0,20"
+                        DockPanel.Dock="Top"
+                        Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Text="状态:" />
+                        <ComboBox Margin="10,0" SelectedIndex="{Binding CurrentDto.Status}">
+                            <ComboBoxItem Content="待办" />
+                            <ComboBoxItem Content="已办" />
+                        </ComboBox>
+                    </StackPanel>
+                    <TextBox
+                        md:HintAssist.Hint="请输入待办概要"
+                        DockPanel.Dock="Top"
+                        Text="{Binding CurrentDto.Title}" />
+                    <TextBox
+                        Margin="0,10"
+                        md:HintAssist.Hint="请输入待办事项内容"
+                        DockPanel.Dock="Top"
+                        MinLines="4"
+                        Text="{Binding CurrentDto.Content}" />
+                    <Button
+                        Command="{Binding ExecuteCommand}"
+                        CommandParameter="Save"
+                        Content="添加到待办"
+                        DockPanel.Dock="Top" />
+                </DockPanel>
+            </md:DrawerHost.RightDrawerContent>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <StackPanel VerticalAlignment="Stretch" Orientation="Horizontal">
+                    <TextBox
+                        Margin="15"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        md:HintAssist.Hint="查找待办事项..."
+                        md:TextFieldAssist.HasClearButton="True"
+                        Text="{Binding Search, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <!--  添加回车事件  -->
+                        <TextBox.InputBindings>
+                            <KeyBinding
+                                Key="Enter"
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="Query" />
+                        </TextBox.InputBindings>
+                        <!--<i:Interaction.Triggers>
+                            <i:KeyTrigger Key="Enter">
+                                <i:InvokeCommandAction Command="{Binding ExecuteCommand}" CommandParameter="Query" />
+                            </i:KeyTrigger>
+                        </i:Interaction.Triggers>-->
+                    </TextBox>
+                    <TextBlock
+                        Margin="10,0"
+                        VerticalAlignment="Center"
+                        Text="筛选:" />
+                    <ComboBox
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        SelectedIndex="{Binding SelectedIndex}">
+                        <ComboBoxItem Content="全部" />
+                        <ComboBoxItem Content="待办" />
+                        <ComboBoxItem Content="已完成" />
+                    </ComboBox>
+                </StackPanel>
+                <Button
+                    Margin="10,5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Command="{Binding ExecuteCommand}"
+                    CommandParameter="Add"
+                    Content=" + 添加待办" />
+                <StackPanel
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding TodoList.Count, Converter={StaticResource IntToVisibleConverter}}">
+                    <Image
+                        Width="120"
+                        Height="120"
+                        Source="/Images/nodata.png" />
+                    <TextBlock
+                        Margin="0,10"
+                        FontSize="22"
+                        Text="尝试添加一些待办事项，以便在此处查看它们..." />
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="1">
+                    <ItemsControl HorizontalAlignment="Center" ItemsSource="{Binding TodoList}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <md:TransitioningContent OpeningEffect="{md:TransitionEffect Kind=ExpandIn}">
+                                    <Grid
+                                        MinWidth="200"
+                                        MinHeight="180"
+                                        MaxHeight="220"
+                                        Margin="10">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding DataContext.SelectedCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto" />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <Border Grid.RowSpan="2" CornerRadius="2">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <!--<DataTrigger Binding="{Binding Status}" Value="default">
+                                                            <Setter Property="Background" Value="White" />
+                                                        </DataTrigger>-->
+                                                        <DataTrigger Binding="{Binding Status}" Value="0">
+                                                            <Setter Property="Background" Value="#1E90FF" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="1">
+                                                            <Setter Property="Background" Value="#3CB371" />
+                                                        </DataTrigger>
+
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
+                                        <TextBlock Padding="10,5" Text="{Binding Title}" />
+                                        <TextBlock
+                                            Grid.Row="1"
+                                            Padding="10,5"
+                                            Text="{Binding Content}" />
+                                        <md:PopupBox HorizontalAlignment="Right">
+                                            <Button
+                                                Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                Content="删除" />
+                                        </md:PopupBox>
+
+                                        <Canvas Grid.RowSpan="2" ClipToBounds="True">
+                                            <Ellipse
+                                                Canvas.Top="20"
+                                                Canvas.Right="-80"
+                                                Width="120"
+                                                Height="120"
+                                                Fill="White"
+                                                Opacity="0.1" />
+                                            <Ellipse
+                                                Canvas.Top="90"
+                                                Canvas.Right="-20"
+                                                Width="120"
+                                                Height="120"
+                                                Fill="White"
+                                                Opacity="0.2" />
+                                        </Canvas>
+                                    </Grid>
+                                </md:TransitioningContent>
+
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </md:DrawerHost>
+
+    </md:DialogHost>
+
+</UserControl>

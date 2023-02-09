@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <BaseOutputPath>..\DataSharing\bin\Debug\netcoreapp3.1</BaseOutputPath>
+    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProgramsNetCore.IReposity\ProgramsNetCore.IReposity.csproj" />
+    <ProjectReference Include="..\ProgramsNetCore.IService\ProgramsNetCore.IService.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,332 @@
+using Autofac;
+using Autofac.Core;
+using DataSharing.Common;
+using DataSharing.Filter;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using ProblemDisposal.Common.Basic;
+using ProgramsNetCore.Common;
+using ProgramsNetCore.Common.Autofac;
+using ProgramsNetCore.Common.AutoMapper;
+using ProgramsNetCore.Common.Extensions;
+using ProgramsNetCore.Common.GlobalRouting;
+using ProgramsNetCore.Common.Hubs;
+using ProgramsNetCore.Common.JWT;
+using ProgramsNetCore.Common.Quartz;
+using ProgramsNetCore.Middlewares;
+using ProgramsNetCore.PolicyRequirement;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Reflection;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using static ProgramsNetCore.Common.PublicEnum;
+
+namespace ProgramsNetCore
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.Configure<ApiBehaviorOptions>(option =>
+            {
+                option.SuppressModelStateInvalidFilter = true;
+            });
+
+
+        
+
+            services.AddHttpContextAccessor();
+            services.AddSingleton<Models.ILogger, Logger>();
+
+            services.AddControllers(op => {
+                ///全局路由
+                op.UseCentralRoutePrefix(new RouteAttribute("api/[Controller]/[Action]"));
+                op.Filters.Add(new ApiValidationFilter());
+            })
+ .AddNewtonsoftJson(op =>
+ { //Newtonsoft.Json  
+        op.SerializerSettings.DateFormatString = "yy-MM-dd HH:mm";
+        //序列化和反序列化时,包含默认值
+        op.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+        // 忽略循环引用,规避EntityFramework导航属性json序列化时的循环引用问题
+        op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+
+     op.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+ });
+
+            services.AddSingleton(new Appsettings(Configuration));
+            services.AddSingleton<IAuthorizationHandler, MustRoleHandler>();
+            services.Configure<FormOptions>(options =>
+            {
+                // Set the limit to 256 MB
+                options.MultipartBodyLengthLimit = 268435456;
+            }).Configure<KestrelServerOptions>(option => {
+                Configuration.GetSection("Kestrel");
+                option.AllowSynchronousIO = true;
+            }).Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "ToDo API",
+                    Description = "An ASP.NET Core Web API for managing ToDo items",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Wei Contact",
+                        Url = new Uri("https://example.com/contact")
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Example License",
+                        Url = new Uri("https://example.com/license")
+                    }
+                });
+
+                #region Token绑定到ConfigureServices
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Description = "输入Bearer token",
+                    Name = "Authorization",
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference =new OpenApiReference
+                            {
+                                Type =ReferenceType.SecurityScheme ,Id ="Bearer"
+                            }
+                        },new string[]{ }
+                    }
+                });
+
+
+                #endregion
+
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename),true);
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"ProgramsNetCore.Models.xml"), true);
+            });
+
+            services.AddSingleton<IMemoryCache>(factory =>
+            {
+                var cache = new MemoryCache(new MemoryCacheOptions());
+                return cache;
+            });
+            services.AddAuthorization(options =>
+            {
+                //策略授权三大块
+                //基于角色 
+                options.AddPolicy("S_AdminPolicy", o => {
+                    //o.RequireClaim(ClaimTypes.Role, Common.PublicEnum.AuthorizeType.S_Admin.ToString()).Build();//CliamType=Type    
+                    o.RequireRole(((int)Common.PublicEnum.AuthorizeType.S_Admin).ToString());//CliamType=Type    
+                });
+                options.AddPolicy("S_SecurityPolicy", o => {                   
+                    o.RequireRole(((int)Common.PublicEnum.AuthorizeType.S_Security).ToString());//CliamType=Type    
+                });
+                options.AddPolicy("AdminPolicy", o => {                  
+                    o.RequireRole(((int)Common.PublicEnum.AuthorizeType.Admin).ToString(),((int)Common.PublicEnum.AuthorizeType.G_Admin).ToString());//CliamType=Type    
+                });
+                options.AddPolicy("S_OperatorPolicy", o => {             
+                    o.RequireRole(((int)Common.PublicEnum.AuthorizeType.S_Operator).ToString());//CliamType=Type    
+                });
+                options.AddPolicy("S_AuditorPolicy", o => {
+                    o.RequireRole(((int)Common.PublicEnum.AuthorizeType.S_Auditor).ToString());//CliamType=Type    
+                });
+                ////基于声明  根据指定的声明
+                //options.AddPolicy("ClaimPolicy", o => {
+                //    o.RequireClaim("","");//ClaimType   
+                //});
+                ////基于需求 
+                //options.AddPolicy("", o => {
+                //    //继承至 IAuthorizationRequirement 自定义
+                //    o.Requirements.Add(new AdminRequirement() {  });
+                //});
+
+            }).AddAuthentication(options =>
+            {
+                //options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                //options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = "JwtBearer";
+                options.DefaultChallengeScheme = "JwtBearer";
+            }).AddJwtBearer("JwtBearer",async options => {
+
+                //options.Audience = "Audience";
+                //options.TokenValidationParameters = new TokenValidationParameters
+                //{
+                //    ValidateIssuer = true,//是否验证Issuer
+                //    ValidateAudience = true,//是否验证Audience
+                //    ValidateLifetime = true,//是否验证失效时间
+                //    ValidateIssuerSigningKey = true,//是否验证SecurityKey
+                //    ValidIssuer = Configuration["Audience:Issuer"],//appsettings.json文件中定义的Issuer 
+                //    ValidAudience = Configuration["Audience:Audience"],//appsettings.json文件中定义的Audience
+                //    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Audience:Secret"]))
+                //};
+                //options.SaveToken = true;
+                //options.RequireHttpsMetadata = false;
+                //IdentityModelEventSource.ShowPII = true;
+                //options.Authority = "http://localhost:401/api/PushHub";
+                options.Events = new JwtBearerEvents
+                {
+                   
+                    //此处为权限验证失败后触发的事件
+                    OnChallenge = context =>
+                    {
+                        //此处代码为终止.Net Core默认的返回类型和数据结果，这个很重要哦，必须
+                        context.HandleResponse();
+                        //自定义自己想要返回的数据结果，我这里要返回的是Json对象，通过引用Newtonsoft.Json库进行转换
+                        var payload = new AjaxResult<string> {  StatusCode=403, Data="认证失败，无权限" };
+                        //自定义返回的数据类型
+                        context.Response.ContentType = "application/json";
+                        //自定义返回状态码，默认为401 我这里改成 200
+                        context.Response.StatusCode = StatusCodes.Status200OK;
+                        //context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        //输出Json数据结果
+                        context.Response.WriteAsync( Newtonsoft.Json.JsonConvert.SerializeObject(payload));
+                        return Task.FromResult(0);
+                    }
+                    //,
+                    //OnTokenValidated = async context =>
+                    //{
+                    //    var token = context.Request.Query["access_token"];
+                    //    TokenModel tm = JwtHelper.SerializeJwt(token);
+
+                    //    //授权
+                    //    var claimList = new List<Claim>();
+                    //    var claim = new Claim(ClaimTypes.Role, tm.Role.ToString());
+
+                    //    //Test-By-ZSZ
+                    //    claimList.Add(new Claim("Permission", tm.Permissions));
+                    //    claimList.Add(new Claim(JwtRegisteredClaimNames.NameId, tm.UId.ToString()));
+                    //    claimList.Add(new Claim(ClaimTypes.NameIdentifier, tm.UId.ToString()));
+
+                    //    claimList.Add(claim);
+                    //    var identity = new ClaimsIdentity(claimList);
+                    //    var principal = new ClaimsPrincipal(identity);
+                    //    context.HttpContext.User = principal;
+
+                    //}
+                };
+
+            });
+
+            services.AddSignalR();
+            services.AddCors(option => option.AddPolicy("Domain",
+         builder =>
+         builder.AllowAnyMethod()
+         .AllowAnyHeader()
+         .SetIsOriginAllowed(_ => true)
+         .AllowCredentials())
+         );
+
+            //AutoMapper映射
+            services.AddAutoMapperSetup();
+        }
+
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new AutofacModuleRegister());
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+
+            }
+
+            ServiceLocator.Instance = app.ApplicationServices;
+            ServiceLocator.ApplicationBuilder = app;
+
+            app.UseHttpsRedirection();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+            app.UseStaticHttpContext();
+            app.UseDbLoggerRecord();
+
+            app.UseStaticFiles();
+
+            app.UseJwtTokenAuth();
+
+            //启用中间件服务生成Swagger作为JSON终结点
+            app.UseSwagger();
+            //启用中间件服务对swagger-ui，指定Swagger JSON终结点
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.RoutePrefix = string.Empty;
+            });
+
+            app.UseRouting();
+
+            app.UseCors("Domain");
+            //默认启动cookie
+            app.UseCookiePolicy();
+            //这是授权
+            app.UseAuthorization();
+            //这是认证
+            app.UseAuthentication();
+            //返回错误码
+            app.UseStatusCodePages();
+
+            app.UseQuartz();
+
+
+            //   app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders=ForwardedHeaders.XForwardedFor|ForwardedHeaders.XForwardedProto });
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<PushHub>("/api/PushHub");
+                endpoints.MapControllers();
+            });
+        }
+    }
+
+
+}

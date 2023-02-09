@@ -1,0 +1,23 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "Audience": {
+    "Secret": "sdfsdfsrty45634kkhllghtdgdfss345t678fs", //
+    "SecretFile": "C:\\my-file\\DataSharing.audience.secret.txt", //
+    "Issuer": "ProgramsNetCore",
+    "Audience": "qKunv"
+  },
+  "ConnectionStrings": {
+
+    "ConStr": "server=81.68.132.58;Database=data_sharing_platform;Uid=root;Pwd=root;charset=UTF8;Allow Zero Datetime=True;port=3666;AllowLoadLocalInfile=true",
+    //"ConStr": "server=192.168.1.112;Database=data_sharing_platform;Uid=root;Pwd=123456;charset=UTF8;Allow Zero Datetime=True;port=3306;AllowLoadLocalInfile=true",
+    "MainDbConStr": "server=192.168.1.112;Database=data_sharing_main;Uid=root;Pwd=123456;charset=UTF8;Allow Zero Datetime=True;port=3306;AllowLoadLocalInfile=true",
+    "AffiliatedDbConStr": "server=192.168.1.112;Database=data_sharing_affiliated;Uid=root;Pwd=123456;charset=UTF8;Allow Zero Datetime=True;port=3306;AllowLoadLocalInfile=true"
+  }
+}

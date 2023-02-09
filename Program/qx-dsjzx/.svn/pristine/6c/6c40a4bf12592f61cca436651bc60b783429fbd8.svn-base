@@ -1,0 +1,150 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Models;
+using ProblemDisposal.Common.Basic;
+using ProgramsNetCore.Common;
+using ProgramsNetCore.Common.Basic;
+using ProgramsNetCore.IService;
+using ProgramsNetCore.Models.Dto.RepairOrderDto;
+using SqlSugar;
+
+namespace DataSharing.Controllers
+{
+    /// <summary>
+    ///     工单
+    /// </summary>
+    [Route("")]
+    [ApiController]
+    public class RepairOrderController : ControllerBase
+    {
+        private readonly HttpContext _context;
+        private readonly IDataTableService _dtService;
+        private readonly IMapper _map;
+        private readonly IOrderProcessInfoService _opiService;
+        private readonly IRepairOrderService _poService;
+        private readonly IProcessService _prcService;
+        private readonly IPublicTaskService _ptService;
+
+        public RepairOrderController(IDataTableService dtService, IPublicTaskService ptService,
+            IRepairOrderService poService, IMapper map, IProcessService prcService, IOrderProcessInfoService opiService)
+        {
+            _dtService = dtService;
+            _ptService = ptService;
+            _poService = poService;
+            _map = map;
+            _prcService = prcService;
+            _opiService = opiService;
+        }
+
+        /// <summary>
+        ///     添加工单
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<AjaxResult<string>> AddRepairOrder(AddRepairOrderDto dto)
+        {
+            var userid = (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value).ToInt32();
+            if (userid <= 0) return new AjaxResult<string>(false);
+            var orderno = "jworder" + userid + DateTime.Now.ToString("yyMMddHHmmss");
+            var insertentity = _map.Map<repair_order>(dto);
+            var nowtime = DateTime.Now;
+            insertentity.StartTime = nowtime;
+            insertentity.Number = orderno;
+            var result = await _poService.IdAdd(insertentity);
+            if (result <= 0) return new AjaxResult<string>(false);
+            var taskid = await _ptService.IdAdd(new public_task
+                { TaskType = 4, StartTime = nowtime, Status = 1, InfoRelation = result });
+            var processid = await _prcService.IdAdd(new process
+                { CreateTime = nowtime, Describe = "工单申请", Status = 0, TaskId = taskid, UserId = userid });
+            await _opiService.Add(new order_processinfo { Opinion = dto.Opinion, ProcessId = processid,Node = 0});
+            await _ptService.UpdateColumn(new public_task { Id = taskid, CurrentProcess = processid },
+                i => new { i.CurrentProcess });
+
+            return new AjaxResult<string>();
+        }
+
+        /// <summary>
+        ///     获取工单等级
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<AjaxResult<List<ReturnOrderLevelDto>>> GetOrderLevel()
+        {
+            var sql =
+                "  select CONVERT(dict_value,SIGNED)  Id,dict_info levelname,remarks level from public_dict where dict_key='order_priority' order by dict_value";
+            var result = await _dtService.GetEntityList<ReturnOrderLevelDto>(sql);
+            return new AjaxResult<List<ReturnOrderLevelDto>>(result);
+        }
+
+        /// <summary>
+        ///     分页获取工单信息
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<PageResult<List<ReturnOrderInfoDto>>> GetPageOrderInfo(GetOrderInfoDto dto)
+        {
+            var sql =
+                $" select pt.id, ro.number `no`,ro.title,ro.starttime submittime,ro.user username,ro.phone ,ro.priority,pd.dict_info priorityname, case when  TIMEdiff(  ro.EndTime,NOW())<0 and pt.status<2 then '已超时' else p.`Describe` end  process  from  ( select * from  public_task where TaskType=4) pt join repair_order ro on ro.id=pt.InfoRelation join (select * from  public_dict where dict_key='order_priority'  ) pd on pd.dict_value=ro.Priority  join process  p on p.id=pt.CurrentProcess where 1=1  {(dto.Status == 0 ? " " :dto.Status==1? $" and  pt.status={dto.Status} and  TIMEdiff(  ro.EndTime,NOW())>0" :$" and ( pt.status={dto.Status} or   TIMEdiff( ro.EndTime,NOW())< 0  )")} ";
+            var sqlwhere = "";
+            if (dto.StartTime != null && dto.EndTime != null) sqlwhere +=  $" and datediff({dto.EndTime},p.CreateTime)>0 and  datediff({dto.StartTime},p.CreateTime)<0 " ;
+            if (dto.Priority != null) sqlwhere += $" and ro.priority={dto.Priority} ";
+                RefAsync<int> total = 0;
+            var result =
+                await _dtService.GetEntityPageList<ReturnOrderInfoDto>(sql, dto.PageIndex, dto.PageSize, total);
+            return new PageResult<List<ReturnOrderInfoDto>>(result, total);
+        }
+
+
+        /// <summary>
+        ///     获取工单详情信息
+        /// </summary>
+        /// <param name="taskid"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<AjaxResult<ReturnOrderDetailsDto>> GetOrderDetails(int taskid)
+        {
+            var sql =
+                $" select pt.id, ro.Number `no`,ro.`User` username,ro.Phone,ro.Department,ro.StartTime,ro.title,ro.field ,ro.type,ro.content from ( select * from  public_task where TaskType=4) pt join repair_order ro on ro.id=pt.InfoRelation  join process  p on p.id=pt.CurrentProcess where pt.id={taskid} ";
+            var result = await _dtService.GetEntity<ReturnOrderDetailsDto>(sql);
+            var handtime =DateTime.Now-result.StartTime;
+            result.HandlingTime = handtime.Days + "天" +handtime.Hours +"小时";
+            sql =
+                $"select cu.real_name username,op.node,t.dict_info nodename, p.describe process ,p.CreateTime ,op.opinion from process p join order_processinfo op on op.ProcessId=p.id  left join cloud_user cu on cu.id=p.UserId left join ( select * from public_dict where dict_key='order_node') t on t.dict_value=op.node where p.taskid={taskid}";
+            var processchild = await _dtService.GetEntityList<ReturnProcessInfoDto>(sql);
+            result.Child = processchild;
+            return new AjaxResult<ReturnOrderDetailsDto>(result);
+        }
+
+        /// <summary>
+        /// 提交工单
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<AjaxResult<string>> SubmitOrder(SubmitOrderDto dto)
+        {
+            var userid = (HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value).ToInt32();
+            if (userid <= 0) return new AjaxResult<string>(false, "认证失败，请重新登录");
+            var existsentity = await _ptService.GetEntity(i => i.Id == dto.Taskid);
+            if (existsentity == null) return new AjaxResult<string>(false, "数据错误");
+            if (existsentity.TaskType != 4) return new AjaxResult<string>(false, "数据错误");
+            if (dto.Status == 2 && existsentity.Status != 2) return new AjaxResult<string>(false, dto.Status==1?"流程未完结，无法发起评价":"流程已评价，请勿重新评价");
+            var currentid = await _prcService.IdAdd(new process
+                { CreateTime = DateTime.Now, Status = 1, UserId = userid, Describe = dto.Status==1?"工单反馈":"评价", TaskId = dto.Taskid });
+            await _opiService.Add(new order_processinfo { Opinion = dto.FeedBack, ProcessId = currentid, Node = dto.Node});
+            var result = await _ptService.UpdateColumn(new public_task { Id = dto.Taskid,Status =(dto.Status==1?2:3), CurrentProcess = currentid, EndTime = DateTime.Now},
+                i => new { i.CurrentProcess, i.EndTime,i.Status });
+            return new AjaxResult<string>(result > 0);
+        }
+
+
+
+    }
+}

@@ -1,0 +1,202 @@
+﻿using System;
+using System.Linq;
+using System.Text;
+using SqlSugar;
+
+namespace Models
+{
+    ///<summary>
+    ///
+    ///</summary>
+    [SugarTable("datatask")]
+    public partial class datatask
+    {
+           public datatask(){
+
+
+           }
+           /// <summary>
+           /// Desc:任务表
+           /// Default:
+           /// Nullable:False
+           /// </summary>           
+           [SugarColumn(IsPrimaryKey=true,IsIdentity=true)]
+           public int Id {get;set;}
+
+           /// <summary>
+           /// Desc:监督任务名称
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string TaskName {get;set;}
+
+           /// <summary>
+           /// Desc:监督模型名称
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string ModelName {get;set;}
+
+           /// <summary>
+           /// Desc:建模单位
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string Tissue {get;set;}
+
+           /// <summary>
+           /// Desc:所属领域
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string Realm {get;set;}
+
+           /// <summary>
+           /// Desc:建模方式
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string ModelingWay {get;set;}
+
+           /// <summary>
+           /// Desc:模型审批用户
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string Approver {get;set;}
+
+           /// <summary>
+           /// Desc:规则
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string Rule {get;set;}
+
+           /// <summary>
+           /// Desc:备注
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string Remark {get;set;}
+
+           /// <summary>
+           /// Desc:模型类型
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string Type {get;set;}
+
+           /// <summary>
+           /// Desc:所属区域
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string Region {get;set;}
+
+           /// <summary>
+           /// Desc:创建人
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string Creator {get;set;}
+
+           /// <summary>
+           /// Desc:创建人Id
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public int? CreatorId {get;set;}
+
+           /// <summary>
+           /// Desc:创建时间
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public DateTime? CreateTime {get;set;}
+
+           /// <summary>
+           /// Desc:联系电话
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string Phone {get;set;}
+
+           /// <summary>
+           /// Desc:状态；1：用户制作模型中；2：模型制作完成
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public int? Status {get;set;}
+
+           /// <summary>
+           /// Desc:审核状态；1：未审核；2：已审核；3：驳回
+           /// Default:1
+           /// Nullable:True
+           /// </summary>           
+           public int? ExamineStatus {get;set;}
+
+           /// <summary>
+           /// Desc:审核人
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string Checker {get;set;}
+
+           /// <summary>
+           /// Desc:审核时间
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public DateTime? CheckTime {get;set;}
+
+           /// <summary>
+           /// Desc:推广状态：0：不推广；1：推广
+           /// Default:0
+           /// Nullable:True
+           /// </summary>           
+           public int? ExtensionStatus {get;set;}
+
+           /// <summary>
+           /// Desc:删除状态:0：未删除；1：已删除
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public int? Deleted {get;set;}
+
+           /// <summary>
+           /// Desc:运行次数
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public int? RunningTimes {get;set;}
+
+           /// <summary>
+           /// Desc:有效期
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public DateTime? EndTime {get;set;}
+
+           /// <summary>
+           /// Desc:Cron表达式
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string Cron {get;set;}
+
+           /// <summary>
+           /// Desc:自动触发条件
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string AutoTriggerCondition {get;set;}
+
+           /// <summary>
+           /// Desc:执行语句
+           /// Default:
+           /// Nullable:True
+           /// </summary>           
+           public string ExcuteSql {get;set;}
+
+    }
+}

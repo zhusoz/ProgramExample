@@ -1,0 +1,51 @@
+﻿<UserControl
+    x:Class="MyToDo.Views.AboutView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MyToDo.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid>
+        <StackPanel>
+            <TextBlock
+                Margin="0,0,0,20"
+                FontSize="30"
+                Text="关于作者" />
+            <TextBlock>
+                <Run Text="博客园:" />
+                <Hyperlink
+                    x:Name="BoKeYuanLink"
+                    Command="{Binding OpenInDefaultExplorerCommand}"
+                    CommandParameter="{Binding ElementName=BoKeYuanLink, Path=NavigateUri}"
+                    NavigateUri="https://www.cnblogs.com/">
+                    https://www.cnblogs.com/
+                </Hyperlink>
+            </TextBlock>
+            <TextBlock>
+                <Run Text="B站:" />
+                <Hyperlink
+                    x:Name="BiZhanLink"
+                    Command="{Binding OpenInDefaultExplorerCommand}"
+                    CommandParameter="{Binding ElementName=BiZhanLink, Path=NavigateUri}"
+                    NavigateUri="https://www.bilibili.com/">
+                    https://www.bilibili.com/
+                </Hyperlink>
+            </TextBlock>
+            <TextBlock>
+                <Run Text="GitHub:" />
+                <Hyperlink
+                    x:Name="GitHubLink"
+                    Command="{Binding OpenInDefaultExplorerCommand}"
+                    CommandParameter="{Binding ElementName=GitHubLink, Path=NavigateUri}"
+                    NavigateUri="https://github.com/">
+                    https://github.com/
+                </Hyperlink>
+            </TextBlock>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

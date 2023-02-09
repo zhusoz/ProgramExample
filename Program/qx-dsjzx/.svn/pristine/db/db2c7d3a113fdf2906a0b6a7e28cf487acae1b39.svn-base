@@ -1,0 +1,107 @@
+﻿
+using Microsoft.Extensions.DependencyInjection;
+using Org.BouncyCastle.Crypto.Generators;
+using ProgramsNetCore.Common.EncryptionToDecrypt;
+using ProgramsNetCore.IService;
+using ProgramsNetCore.Models.Dto.DataMigration;
+using Quartz;
+using SqlSugar;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ProgramsNetCore.Common.Quartz
+{
+    /// <summary>
+    /// 数据库互导任务
+    /// </summary>
+    public class SteilheitTaskJob : IJob
+    {
+        static IServiceScope serviceScope = ServiceLocator.ApplicationBuilder.ApplicationServices.CreateScope();
+        private static IDataTableService _dtService => serviceScope.ServiceProvider.GetService(typeof(IDataTableService)) as IDataTableService;
+        public async Task Execute(IJobExecutionContext context)
+        {
+
+            var datasql = context.Trigger.JobDataMap.GetString("datasql");
+            var tablename = context.Trigger.JobDataMap.GetString("tablename");
+            var connstr = context.Trigger.JobDataMap.Get("connection") as ConnectionConfig;
+            try
+            {
+             
+
+
+
+                if (!string.IsNullOrEmpty(datasql) && connstr != null&&!string.IsNullOrEmpty(tablename))
+                {
+
+                    SqlSugarClient db = new SqlSugarClient(connstr);
+
+                    db.Open();
+
+                    var resultEntitys = await _dtService.GetEntity<ResultSecretDataInfoDto>(datasql);
+                    string key = "";
+
+                    var intcount = (await _dtService.QueryCount($"select count(*) from {(resultEntitys.IsDataService.HasValue ? "data_sharing_main" : "data_sharing_affiliated")}.{resultEntitys.AssociativeTable} where 1=1")).ToInt32();
+                    intcount = intcount % 1000000 == 0 ? intcount / 1000000 : intcount / 1000000 + 1;
+                    await db.Ado.ExecuteCommandAsync("set global local_infile=1;");
+                    for (int x = 1; x <= intcount; x++)
+                    {
+                        var dt = await _dtService.GetDataTable($"select * from {(resultEntitys.IsDataService.HasValue ? "data_sharing_main" : "data_sharing_affiliated")}.{resultEntitys.AssociativeTable} where 1=1", x, 1000000, new SqlSugar.RefAsync<int>());
+                        key = resultEntitys.SecretMode == 1 ? resultEntitys.SecretEncode : "qx123456";
+
+                        
+                        //数据加密
+                        if (resultEntitys.StartTime != null && resultEntitys.EndTime > DateTime.Now)
+                        {
+                            //字段加密
+                            if (resultEntitys.SecretType == 1)
+                            {
+                                var dtkey = await _dtService.GetDataTable($" select Secretkey from secret_child where parent_id={resultEntitys.SecretId} ");
+                                for (int i = 0; i < dt.Rows.Count; i++)
+                                {
+                                    for (int j = 0; j < dtkey.Rows.Count; j++)
+                                    {
+                                        dt.Rows[i][dtkey.Rows[j][0] as string] = DEncrypt.Encrypt(dt.Rows[i][dtkey.Rows[j][0] as string] as string, key);
+                                    }
+                                }
+                            }
+                            //表加密
+                            else if (resultEntitys.SecretType == 2)
+                            {
+                                for (int i = 0; i < dt.Columns.Count; i++)
+                                {
+                                    if (dt.Columns[i].DataType.Name == "String")
+                                    {
+                                        for (int j = 0; j < dt.Rows.Count; j++)
+                                        {
+                                            dt.Rows[j][i] = DEncrypt.Encrypt(dt.Rows[j][i] as string, key);
+                                        }
+                                    }
+                                }
+                            }
+                            //未加密
+                            else if (resultEntitys.SecretType == null)
+                            {
+
+                            }
+
+                        }
+                       
+                        await db.Fastest<DataTable>().PageSize(1000000).AS(tablename).BulkCopyAsync(dt);
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            var taskid = context.Trigger.JobDataMap.GetString("taskid");
+            if (!string.IsNullOrEmpty(taskid))
+                await _dtService.NoQueryExcuteSql($"update datamigrationtaskinfo set IsImplement=1 where id=(select InfoRelation from public_task where id={taskid})  ");
+        }
+    }
+}

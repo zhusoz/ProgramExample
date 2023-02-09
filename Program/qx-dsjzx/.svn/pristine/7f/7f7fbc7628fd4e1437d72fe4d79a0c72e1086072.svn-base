@@ -1,0 +1,20 @@
+﻿using Models;
+using ProgramsNetCore.IReposity;
+using ProgramsNetCore.IService;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ProgramsNetCore.Service
+{
+    public class ServiceApplicationTaskInfoService : BaseService<ServiceApplicationTaskInfo>, IServiceApplicationTaskInfoService
+    {
+        private readonly IBaseRep<ServiceApplicationTaskInfo> _baseRep;
+
+        public ServiceApplicationTaskInfoService(IBaseRep<ServiceApplicationTaskInfo> baseRep)
+        {
+            _baseRep = baseRep;
+            _dal = _baseRep;
+        }
+    }
+}

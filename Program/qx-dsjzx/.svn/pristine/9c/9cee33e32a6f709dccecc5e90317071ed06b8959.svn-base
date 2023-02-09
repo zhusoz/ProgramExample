@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ProgramsNetCore.Models.Dto.RepairOrderDto
+{
+    /// <summary>
+    /// 工单信息请求类
+    /// </summary>
+    public class GetOrderInfoDto:PageDto
+    {
+        /// <summary>
+        /// 工单状态：1：执行中；2：已完成；
+        /// </summary>
+        public int Status { get; set; }
+    }
+}

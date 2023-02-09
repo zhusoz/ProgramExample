@@ -1,0 +1,109 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using ProblemDisposal.Common.Basic;
+using ProgramsNetCore.Common;
+using ProgramsNetCore.IService;
+using ProgramsNetCore.Models.Dto.HomeDto;
+using SqlSugar;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace DataSharing.Controllers
+{
+    /// <summary>
+    /// 首页
+    /// </summary>
+    [Route("")]
+    [ApiController]
+    public class HomeController : ControllerBase
+    {
+
+        private readonly IDataTableService _dataTableService;
+        private readonly IDataMapService _dataMapService;
+        private readonly IApprovalTaskService _approvalTaskService;
+        private readonly IDataTrendService _dataTrendService;
+        private readonly IConfiguration _configuration;
+
+        public HomeController(IDataTableService dataTableService, IDataMapService dataMapService, IApprovalTaskService approvalTaskService,IDataTrendService dataTrendService, IConfiguration configuration)
+        {
+            _dataTableService=dataTableService;
+            _dataMapService=dataMapService;
+            _approvalTaskService=approvalTaskService;
+            _dataTrendService=dataTrendService;
+            _configuration=configuration;
+        }
+
+        /// <summary>
+        /// 总体运行情况
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<AjaxResult<HomeResultDto>> Index()
+        {
+            var result = new HomeResultDto();
+            result.DbHealthProp=new DbHealth() { IsMainDbOnline=true, IsAffiliatedDbOnline=true };
+            //1.数据库健康情况
+            //主库是否在线
+            try
+            {
+                SqlSugarScope mainDbClient = new SqlSugarScope(new ConnectionConfig
+                {
+                    ConnectionString=_configuration.GetConnectionString("MainDbConStr"),
+                    DbType=DbType.MySql,
+                    IsAutoCloseConnection=true
+                });
+                mainDbClient.Open();
+
+
+            }
+            catch (Exception e)
+            {
+                result.DbHealthProp.IsMainDbOnline=false;
+            }
+            //从库是否在线
+            try
+            {
+                SqlSugarScope affiliatedDbClient = new SqlSugarScope(new ConnectionConfig
+                {
+                    ConnectionString=_configuration.GetConnectionString("AffiliatedDbConStr"),
+                    DbType=DbType.MySql,
+                    IsAutoCloseConnection=true
+                });
+                affiliatedDbClient.Open();
+            }
+            catch (Exception)
+            {
+                result.DbHealthProp.IsAffiliatedDbOnline=false;
+            }
+
+            //2.数据库容量
+            double totalVolume = DiskInfoHelper.GetTotalSpace();
+            string volumnSql1 = $"select {totalVolume} TotalVolume,round({totalVolume}-sum(data_length/1024/1024/1024/1024),2) as FreeVolume from information_schema.tables where table_schema='data_sharing_main'";
+            string volumnSql2 = $"select {totalVolume} TotalVolume,round({totalVolume}-sum(data_length/1024/1024/1024/1024),2) as FreeVolume from information_schema.tables where table_schema='data_sharing_affiliated'";
+            result.MainDbVolumeProp=await _dataTableService.GetEntity<DbVolume>(volumnSql1);
+            result.AffiliatedDbVolumeProp=await _dataTableService.GetEntity<DbVolume>(volumnSql2);
+
+            //3.数据汇聚
+            //#查询指定数据库表数量
+            //select count(*) tables, table_schema FROM information_schema.TABLES WHERE table_schema = 'szdb'
+            string countSql = "select t.InternalCount+t.ExternalCount TotalCount,InternalCount,ExternalCount from (select * from (select round(sum(table_rows)/10000,4) InternalCount from information_schema.tables where table_schema = 'data_sharing_main' and table_name in (select Guid from data_sharing_platform.datamap dt where dt.`Status`=1 and dt.IsMapping is null)) t1,(select round(sum(table_rows)/10000,4) ExternalCount from information_schema.tables where table_schema = 'data_sharing_affiliated' and table_name in (select Guid from data_sharing_platform.datamap dt where dt.`Status`=1 and dt.IsMapping)) t2) t";
+            result.DataConvergeProp=await _dataTableService.GetEntity<DataConverge>(countSql);
+
+            //4.数据动态
+            string trendSql = "select t1.InCount+t2.OutCount TotalCount,t1.InCount,t2.OutCount from (select sum(AffectedRows) InCount from `datatrend` where Type=0) t1,(select sum(AffectedRows) OutCount from `datatrend` where Type=1) t2";
+            result.DataTrendProp=await _dataTableService.GetEntity<DataTrend>(trendSql);
+
+            //5.数据平台
+            string platformSql = "select t1.UnitsCount,t2.DataTablesCount,t3.RulesCount,t4.DataItemsCount from (select count(Id) UnitsCount from attribution) t1,(select count(Id) DataTablesCount from datamap dt where dt.`Status`=1) t2,(select count(Id) RulesCount from conditions) t3,(select sum(table_rows) DataItemsCount from information_schema.tables where (table_schema='data_sharing_main' or table_schema='data_sharing_affiliated') and table_name like 'dic%') t4";
+            result.DataPlatformProp=await _dataTableService.GetEntity<DataPlatform>(platformSql);
+
+            //await Logger.AddPlatformLog("获取总体运行情况", LogType.DataAccess);
+
+            return new AjaxResult<HomeResultDto>(result);
+        }
+
+
+    }
+}

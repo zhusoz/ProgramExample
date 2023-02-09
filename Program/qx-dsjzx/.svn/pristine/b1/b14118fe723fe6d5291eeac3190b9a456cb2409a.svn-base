@@ -1,0 +1,87 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Models;
+using ProgramsNetCore.Common;
+using ProgramsNetCore.IService;
+using ProgramsNetCore.Models;
+using SqlSugar;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace ProgramsNetCore.Common
+{
+    /// <summary>
+    /// 记录日志
+    /// </summary>
+    public class Logger : ILogger
+    {
+        static IServiceScope serviceScope = ServiceLocator.ApplicationBuilder.ApplicationServices.CreateScope();
+        private static IDbLogService DbLogService => serviceScope.ServiceProvider.GetService(typeof(IDbLogService)) as IDbLogService;
+        private static IPlatformLogService PlatformLogService => serviceScope.ServiceProvider.GetService(typeof(IPlatformLogService)) as IPlatformLogService;
+
+
+
+
+        /// <summary>
+        /// 添加平台日志
+        /// </summary>
+        /// <param name="describe">操作</param>
+        /// <param name="logType">日志类型 0:登入日志 1:登出日志 2:数据审批 3:数据申请</param>
+        public static async Task AddPlatformLog(string describe, LogType logType)
+        {
+            try
+            {
+                HttpContext HttpContext = Utilities.HttpContext.Current;
+
+                var userId = HttpContext.User.Claims.Where(m => m.Type == "nameid").FirstOrDefault()?.Value.ToInt32();
+                var createTime = DateTime.Now;
+                await PlatformLogService.Add(new log_platform
+                {
+                    UserId = userId,
+                    CreateTime = createTime,
+                    LogType = logType.ToInt32(),
+                    Describe = describe
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteToLocal($"\r\n{ex.Message}" + $"\r\n{ex.StackTrace}");
+            }
+            
+        }
+
+        /// <summary>
+        /// 添加数据库日志 SqlSugarClient
+        /// </summary>
+        public async Task Add(SqlSugarClient ssc,DiffLogModel diffLog)
+        {
+            var dic = ConStrToDic(ssc.Ado.Connection.ConnectionString);
+            var cs = ssc.SugarActionType.ToString();
+
+            var source = dic["database"];
+            string describe;
+            var targetDbAddress = dic["server"] + ":" + dic["port"];
+
+        }
+
+        /// <summary>
+        /// 连接字符串转字典
+        /// </summary>
+        /// <param name="conStr"></param>
+        /// <returns></returns>
+        static Dictionary<string, string> ConStrToDic(string conStr)
+        {
+            string[] conStrArr = conStr.Split(";");
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            foreach (string arr in conStrArr)
+            {
+                var key = arr.Substring(0, arr.IndexOf('=')).ToLower();
+                var value = arr.Substring(arr.IndexOf('=') + 1);
+                dic[key] = value;
+            }
+            return dic;
+        }
+    }
+}

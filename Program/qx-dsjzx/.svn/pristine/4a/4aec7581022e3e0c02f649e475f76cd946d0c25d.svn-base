@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = ProgramsNetCore.IService
+build_property.ProjectDir = E:\SVN\DataSharingAPI\trunk\ProgramsNetCore.IService\

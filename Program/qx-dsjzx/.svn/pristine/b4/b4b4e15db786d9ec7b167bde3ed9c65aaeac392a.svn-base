@@ -1,0 +1,201 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using ProblemDisposal.Common.Basic;
+using ProgramsNetCore.Common;
+using ProgramsNetCore.Common.Basic;
+using ProgramsNetCore.IService;
+using ProgramsNetCore.Models.Dto.DataManageDto;
+using ProgramsNetCore.Models.Dto.HomeDto;
+using SqlSugar;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace DataSharing.Controllers
+{
+    /// <summary>
+    /// 首页
+    /// </summary>
+    [Route("")]
+    [ApiController]
+    public class HomeController : ControllerBase
+    {
+
+        private readonly IDataTableService _dataTableService;
+        private readonly IDataMapService _dataMapService;
+        private readonly IApprovalTaskService _approvalTaskService;
+        private readonly IDataTrendService _dataTrendService;
+        private readonly IConfiguration _configuration;
+
+        public HomeController(IDataTableService dataTableService, IDataMapService dataMapService, IApprovalTaskService approvalTaskService, IDataTrendService dataTrendService, IConfiguration configuration)
+        {
+            _dataTableService=dataTableService;
+            _dataMapService=dataMapService;
+            _approvalTaskService=approvalTaskService;
+            _dataTrendService=dataTrendService;
+            _configuration=configuration;
+        }
+
+        /// <summary>
+        /// 数据汇聚
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<AjaxResult<DataConverge>> GetDataConverge()
+        {
+            //3.数据汇聚
+            //#查询指定数据库表数量
+            //select count(*) tables, table_schema FROM information_schema.TABLES WHERE table_schema = 'szdb'
+            string countSql = "select t.InternalCount+t.ExternalCount TotalCount,InternalCount,ExternalCount,t.IncreasedPerDay from (select * from (select round(sum(table_rows)/10000,4) InternalCount from information_schema.tables where table_schema = 'data_sharing_main' and table_name in (select Guid from data_sharing_platform.datamap dt where dt.`Status`=1 and dt.IsMapping is null)) t1,(select round(sum(table_rows)/10000,4) ExternalCount from information_schema.tables where table_schema = 'data_sharing_affiliated' and table_name in (select Guid from data_sharing_platform.datamap dt where dt.`Status`=1 and dt.IsMapping)) t2,(select sum(AffectedRows) IncreasedPerDay from `datatrend` where date(CreateTime)=date(now()) and Type=0 ) t3) t";
+            var result = await _dataTableService.GetEntity<DataConverge>(countSql);
+            return new AjaxResult<DataConverge>(result);
+        }
+
+        /// <summary>
+        /// 总体运行情况
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<AjaxResult<HomeResultDto>> Index()
+        {
+            var result = new HomeResultDto();
+            result.DbHealthProp=new DbHealth() { IsMainDbOnline=true, IsAffiliatedDbOnline=true };
+            //1.数据库健康情况
+            //主库是否在线
+            try
+            {
+                SqlSugarScope mainDbClient = new SqlSugarScope(new ConnectionConfig
+                {
+                    ConnectionString=_configuration.GetConnectionString("MainDbConStr"),
+                    DbType=DbType.MySql,
+                    IsAutoCloseConnection=true
+                });
+                mainDbClient.Open();
+                mainDbClient.Dispose();
+
+            }
+            catch (Exception)
+            {
+                result.DbHealthProp.IsMainDbOnline=false;
+            }
+            //从库是否在线
+            try
+            {
+                SqlSugarScope affiliatedDbClient = new SqlSugarScope(new ConnectionConfig
+                {
+                    ConnectionString=_configuration.GetConnectionString("AffiliatedDbConStr"),
+                    DbType=DbType.MySql,
+                    IsAutoCloseConnection=true
+                });
+                affiliatedDbClient.Open();
+                affiliatedDbClient.Dispose();
+            }
+            catch (Exception)
+            {
+                result.DbHealthProp.IsAffiliatedDbOnline=false;
+            }
+
+            //2.数据库容量
+            double totalVolume = DiskInfoHelper.GetTotalSpace();
+            string volumnSql1 = $"select {totalVolume} TotalVolume,round({totalVolume}-sum(data_length/1024/1024/1024/1024),2) as FreeVolume from information_schema.tables where table_schema='data_sharing_main'";
+            string volumnSql2 = $"select {totalVolume} TotalVolume,round({totalVolume}-sum(data_length/1024/1024/1024/1024),2) as FreeVolume from information_schema.tables where table_schema='data_sharing_affiliated'";
+            result.MainDbVolumeProp=await _dataTableService.GetEntity<DbVolume>(volumnSql1);
+            result.AffiliatedDbVolumeProp=await _dataTableService.GetEntity<DbVolume>(volumnSql2);
+
+            //3.数据汇聚
+            //#查询指定数据库表数量
+            //select count(*) tables, table_schema FROM information_schema.TABLES WHERE table_schema = 'szdb'
+            string countSql = "select t.InternalCount+t.ExternalCount TotalCount,InternalCount,ExternalCount,t.IncreasedPerDay from (select * from (select round(sum(table_rows)/10000,4) InternalCount from information_schema.tables where table_schema = 'data_sharing_main' and table_name in (select Guid from data_sharing_platform.datamap dt where dt.`Status`=1 and dt.IsMapping is null)) t1,(select round(sum(table_rows)/10000,4) ExternalCount from information_schema.tables where table_schema = 'data_sharing_affiliated' and table_name in (select Guid from data_sharing_platform.datamap dt where dt.`Status`=1 and dt.IsMapping)) t2,(select sum(AffectedRows) IncreasedPerDay from `datatrend` where date(CreateTime)=date(now()) and Type=0 ) t3) t";
+            result.DataConvergeProp=await _dataTableService.GetEntity<DataConverge>(countSql);
+
+            //4.数据动态
+            string trendSql = "select t1.InCount+t2.OutCount TotalCount,t1.InCount,t2.OutCount from (select sum(AffectedRows) InCount from `datatrend` where Type=0) t1,(select sum(AffectedRows) OutCount from `datatrend` where Type=1) t2";
+            result.DataTrendProp=await _dataTableService.GetEntity<DataTrend>(trendSql);
+
+            //5.数据平台
+            string platformSql = "select t1.UnitsCount,t2.DataTablesCount,t3.RulesCount,t4.DataItemsCount from (select count(Id) UnitsCount from attribution) t1,(select count(Id) DataTablesCount from datamap dt where dt.`Status`=1) t2,(select count(Id) RulesCount from conditions) t3,(select sum(table_rows) DataItemsCount from information_schema.tables where (table_schema='data_sharing_main' or table_schema='data_sharing_affiliated') and table_name like 'dic%') t4";
+            result.DataPlatformProp=await _dataTableService.GetEntity<DataPlatform>(platformSql);
+
+            await Logger.AddPlatformLog("获取总体运行情况", LogType.DataAccess);
+
+            return new AjaxResult<HomeResultDto>(result);
+        }
+
+
+        /// <summary>
+        /// 检索
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<PageResult<List<DataMapCollectDto>>> Search(SearchQueryDto dto)
+        {
+            //预检
+            if (dto.PageIndex<=0) dto.PageIndex = 1;
+            if (dto.PageSize<=0) dto.PageSize=10;
+
+            if (string.IsNullOrEmpty(dto.KeyWord))
+            {
+                return new PageResult<List<DataMapCollectDto>>();
+            }
+
+            //1.检索结果列表
+            RefAsync<int> total = 0;
+            string itemSql = "select t1.`id`,t1.`name`,t1.`guid`,attr.`attribution`,t3.`Name` layeredTypeName,t4.`name` dataSafeType,t1.`describe`,t1.`createTime`,t1.`updatetime`,t1.`traffic`,t1.`applicationNum`,t2.`name` frequencyName,t1.`associativeTable`,t1.IsDataService from `datamap` t1 left join `frequency` t2 on t1.Frequency = t2.ID left join `layered` t3 on t1.`layeredType` = t3.`id` left join `modified` t4 on t1.`modifierType` = t4.`id` left join `attribution` attr on t1.`attribution` = attr.Id where t1.`Status`=1 and t1.`RackStatus`=0 and t1.`IsMapping` is null";
+            if (!string.IsNullOrEmpty(dto.KeyWord)) itemSql += $" and t1.`name` like '%{dto.KeyWord}%'";
+            switch (dto.OrderByField)
+            {
+                case 0: break;
+                case 1: itemSql+=" order by t1.`createTime` "; break;
+                default: break;
+            }
+            if (dto.OrderByField==1)
+            {
+                string orderByType = dto.OrderByType?.ToLower();
+                if (orderByType=="desc")
+                {
+                    itemSql+=orderByType;
+                }
+            }
+
+            var result = await _dataTableService.GetEntityPageList<DataMapCollectDto>(itemSql, dto.PageIndex, dto.PageSize, total);
+            return new PageResult<List<DataMapCollectDto>>(result, total, total%dto.PageSize==0 ? total/dto.PageSize : total/dto.PageSize+1, dto.PageSize, dto.PageIndex);
+
+        }
+
+        /// <summary>
+        /// 左侧相关检索
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<AjaxResult<List<SearchResultGroupByDto>>> SearchRelation(SearchRelationQueryDto dto)
+        {
+
+            //预检
+            if (dto.PageIndex<=0) dto.PageIndex = 1;
+            if (dto.PageSize<=0) dto.PageSize=10;
+
+            //1.左侧单位分组列表
+            string leftAttrSql = null;
+            if (string.IsNullOrEmpty(dto.KeyWord))
+            {
+                return new AjaxResult<List<SearchResultGroupByDto>>();
+            }
+            leftAttrSql = $"select attr.Id,attr.Attribution from `datamap` t1 left join `frequency` t2 on t1.Frequency = t2.ID left join `layered` t3 on t1.`layeredType` = t3.`id` left join `modified` t4 on t1.`modifierType` = t4.`id` join `attribution` attr on t1.`attribution` = attr.Id where t1.`Status`=1 and t1.`RackStatus`=0 and t1.`IsMapping` is null and t1.`Name` like '%{dto.KeyWord}%' group by attr.Id";
+            List<SearchResultGroupByDto> result = await _dataTableService.GetEntityList<SearchResultGroupByDto>(leftAttrSql);
+            result.ForEach(async e =>
+            {
+                //2.单位领域分类列表
+                string attrLayeredCountSql = $"select attr.Id,attr.Attribution,t1.LayeredType,t3.`Name` Layered,count(1) Count from `datamap` t1 left join `frequency` t2 on t1.Frequency = t2.ID left join `layered` t3 on t1.`layeredType` = t3.`id` left join `modified` t4 on t1.`modifierType` = t4.`id` join `attribution` attr on t1.`attribution` = attr.Id where t1.`Status`=1 and t1.`RackStatus`=0 and t1.`IsMapping` is null and attr.Id={e.Id} and t1.`Name` like '%{dto.KeyWord}%' group by attr.Id,t1.LayeredType";
+                e.Items=await _dataTableService.GetEntityList<SearchResultGroupByLayeredDto>(attrLayeredCountSql);
+            });
+
+            return new AjaxResult<List<SearchResultGroupByDto>>(result);
+        }
+
+
+    }
+}

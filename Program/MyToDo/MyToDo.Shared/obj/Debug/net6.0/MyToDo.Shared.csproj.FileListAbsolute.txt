@@ -1,0 +1,12 @@
+E:\TestDemo\review\MyToDo\MyToDo.Shared\bin\Debug\net6.0\MyToDo.Shared.deps.json
+E:\TestDemo\review\MyToDo\MyToDo.Shared\bin\Debug\net6.0\MyToDo.Shared.dll
+E:\TestDemo\review\MyToDo\MyToDo.Shared\bin\Debug\net6.0\MyToDo.Shared.pdb
+E:\TestDemo\review\MyToDo\MyToDo.Shared\obj\Debug\net6.0\MyToDo.Shared.csproj.AssemblyReference.cache
+E:\TestDemo\review\MyToDo\MyToDo.Shared\obj\Debug\net6.0\MyToDo.Shared.GeneratedMSBuildEditorConfig.editorconfig
+E:\TestDemo\review\MyToDo\MyToDo.Shared\obj\Debug\net6.0\MyToDo.Shared.AssemblyInfoInputs.cache
+E:\TestDemo\review\MyToDo\MyToDo.Shared\obj\Debug\net6.0\MyToDo.Shared.AssemblyInfo.cs
+E:\TestDemo\review\MyToDo\MyToDo.Shared\obj\Debug\net6.0\MyToDo.Shared.csproj.CoreCompileInputs.cache
+E:\TestDemo\review\MyToDo\MyToDo.Shared\obj\Debug\net6.0\MyToDo.Shared.dll
+E:\TestDemo\review\MyToDo\MyToDo.Shared\obj\Debug\net6.0\refint\MyToDo.Shared.dll
+E:\TestDemo\review\MyToDo\MyToDo.Shared\obj\Debug\net6.0\MyToDo.Shared.pdb
+E:\TestDemo\review\MyToDo\MyToDo.Shared\obj\Debug\net6.0\ref\MyToDo.Shared.dll

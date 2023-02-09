@@ -1,0 +1,21 @@
+﻿namespace ProgramsNetCore.Models.Dto.RepairOrderDto
+{
+    /// <summary>
+    /// 提交提交工单请求类
+    /// </summary>
+    public class SubmitOrderDto
+    {
+        /// <summary>
+        /// 任务Id
+        /// </summary>
+        public int Taskid { get; set; }
+        /// <summary>
+        /// 反馈
+        /// </summary>
+        public string FeedBack { get; set; }
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public int Status { get; set; }
+    }
+}

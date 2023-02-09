@@ -1,0 +1,80 @@
+﻿using Autofac;
+using Autofac.Extras.DynamicProxy;
+using Microsoft.AspNetCore.SignalR;
+using ProgramsNetCore.Common.Aop;
+using ProgramsNetCore.Common.Hubs;
+using ProgramsNetCore.IReposity;
+using ProgramsNetCore.Reposity;
+using Quartz;
+using Quartz.Impl;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using Module = Autofac.Module;
+
+namespace ProgramsNetCore.Common.Autofac
+{
+    public class AutofacModuleRegister : Module
+    {
+
+        protected override void Load(ContainerBuilder builder)
+        {
+
+
+
+            var basePath = AppContext.BaseDirectory;
+
+
+            builder.RegisterType<LogAop>();
+            builder.RegisterType<DataSharingBasedUserIdProvider>().As<IUserIdProvider>();
+            builder.RegisterType<StdSchedulerFactory>().As<ISchedulerFactory>();
+
+            #region 带有接口层的服务注册
+
+
+            //发布环境的dll文件路径
+            var serviceDLLFile = Path.Combine(basePath, @"ProgramsNetCore.Service.dll");
+            var repositoryDLLFile = Path.Combine(basePath, @"ProgramsNetCore.Reposity.dll");
+
+//            //debug的dll文件路径
+//#if DEBUG
+//            serviceDLLFile = Path.Combine(basePath, @"Debug\netcoreapp3.1\ProgramsNetCore.Service.dll");
+//            repositoryDLLFile = Path.Combine(basePath, @"Debug\netcoreapp3.1\ProgramsNetCore.Reposity.dll");
+//#endif
+
+            if (!(File.Exists(serviceDLLFile)) && !(File.Exists(repositoryDLLFile)))
+            {
+                var msg = "dll文件丢失！";
+                throw new Exception(msg);
+            }
+
+            builder.RegisterGeneric(typeof(BaseRep<>)).As(typeof(IBaseRep<>)).InstancePerDependency();//注册仓储
+
+            //// 获取 Service.dll 程序集服务，并注册
+            //var assemblysServices = Assembly.LoadFrom(serviceDLLFile);
+            //builder.RegisterAssemblyTypes(assemblysServices)
+            //          .AsImplementedInterfaces()
+            //          .InstancePerDependency()
+            //          .PropertiesAutowired();
+            //.EnableInterfaceInterceptors()//引用Autofac.Extras.DynamicProxy;
+            // .InterceptedBy(cacheType.ToArray());//允许将拦截器服务的列表分配给注册。
+            var assemblysServices = Assembly.LoadFrom(serviceDLLFile);
+            builder.RegisterAssemblyTypes(assemblysServices)
+             .AsImplementedInterfaces()
+             .InstancePerLifetimeScope()
+             .EnableInterfaceInterceptors()
+             .InterceptedBy(typeof(LogAop));//可以放一个AOP拦截器集合
+
+            // 获取 Repository.dll 程序集服务，并注册
+            var assemblysRepository = Assembly.LoadFrom(repositoryDLLFile);
+            builder.RegisterAssemblyTypes(assemblysRepository)
+                   .AsImplementedInterfaces()
+                   .PropertiesAutowired()
+                   .InstancePerDependency();
+            #endregion
+        }
+    }
+
+}

@@ -1,0 +1,15 @@
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\MyToDo.exe
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\MyToDo.dll
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\MyToDo.deps.json
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\MyToDo.runtimeconfig.json
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\MyToDo.pdb
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\DryIoc.dll
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\MaterialDesignColors.dll
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\MaterialDesignThemes.Wpf.dll
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\Microsoft.Xaml.Behaviors.dll
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\Prism.dll
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\Prism.DryIoc.Wpf.dll
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\Prism.Wpf.dll
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\RestSharp.dll
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\MyToDo.Shared.dll
+E:\TestDemo\review\MyToDo\MyToDo\bin\Release\net6.0-windows\publish\MyToDo.Shared.pdb

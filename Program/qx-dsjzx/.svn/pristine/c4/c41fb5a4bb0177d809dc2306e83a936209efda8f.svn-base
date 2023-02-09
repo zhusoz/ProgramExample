@@ -1,0 +1,123 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Models;
+using ProgramsNetCore.Common;
+using ProgramsNetCore.IService;
+using ProgramsNetCore.Models;
+using SqlSugar;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace ProgramsNetCore.Common
+{
+    /// <summary>
+    /// 记录日志
+    /// </summary>
+    public class Logger : ILogger
+    {
+        private static IDbLogService DbLogService => ServiceHelper.GetService<IDbLogService>();
+        private static IPlatformLogService PlatformLogService => ServiceHelper.GetService<IPlatformLogService>();
+        private static IUserService UserService => ServiceHelper.GetService<IUserService>();
+        static IConfigurationBuilder builder = new ConfigurationBuilder()
+                              .SetBasePath(Directory.GetCurrentDirectory())
+                              .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+
+
+        /// <summary>
+        /// 添加平台日志
+        /// </summary>
+        /// <param name="describe">操作</param>
+        /// <param name="logType">日志类型 0:登入日志 1:登出日志 2:数据审批 3:数据申请</param>
+        public static async Task AddPlatformLog(string describe, LogType logType)
+        {
+            try
+            {
+                HttpContext HttpContext = Utilities.HttpContext.Current;
+
+                var userId = HttpContext.User.Claims.Where(m => m.Type == "nameid").FirstOrDefault()?.Value.ToInt32();
+                var createTime = DateTime.Now;
+                await PlatformLogService.Add(new log_platform
+                {
+                    UserId = userId,
+                    CreateTime = createTime,
+                    LogType = logType.ToInt32(),
+                    Describe = describe
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteToLocal($"\r\n{ex.Message}" + $"\r\n{ex.StackTrace}");
+            }
+
+        }
+
+        /// <summary>
+        /// 添加数据库日志
+        /// </summary>
+        public async static Task AddDBLog(string describe, LogLevel logLevel, string originConStr = null, string targetConStr = null)
+        {
+            try
+            {
+                if (originConStr == null)
+                {
+                    originConStr = builder.Build().GetSection("ConnectionStrings").GetSection("ConStr").Value;
+                }
+                HttpContext HttpContext = Utilities.HttpContext.Current;
+                var userId = HttpContext.User.Claims.Where(m => m.Type == "nameid").FirstOrDefault()?.Value.ToInt32();
+                var createTime = DateTime.Now;
+                var sourceDic = ConStrToDic(originConStr);
+                var source = sourceDic["server"] + ":" + sourceDic["port"];
+                string targetAddress = null;
+                if (userId != null)
+                {
+                    var userName = (await UserService.GetEntity(m => (int)m.id == userId)).real_name;
+                    describe = userName + describe;
+                }
+
+                if (targetConStr != null)
+                {
+                    var targetDic = ConStrToDic(targetConStr);
+                    targetAddress = targetDic["server"] + ":" + targetDic["port"];
+                }
+
+                await DbLogService.Add(new log_db
+                {
+                    Source = source,
+                    Describe = describe,
+                    LogLevel = logLevel.ToInt32(),
+                    TargetDbAddress = targetAddress,
+                    CreateTime = createTime
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteToLocal($"\r\n{ex.Message}" + $"\r\n{ex.StackTrace}");
+            }
+
+
+        }
+
+        /// <summary>
+        /// 连接字符串转字典
+        /// </summary>
+        /// <param name="conStr"></param>
+        /// <returns></returns>
+        static Dictionary<string, string> ConStrToDic(string conStr)
+        {
+            string[] conStrArr = conStr.Split(";");
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            foreach (string arr in conStrArr)
+            {
+                var key = arr.Substring(0, arr.IndexOf('=')).ToLower().Trim();
+                var value = arr.Substring(arr.IndexOf('=') + 1).Trim();
+                dic[key] = value;
+            }
+            return dic;
+        }
+    }
+}

@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ProgramsNetCore.Models.Dto.DataCollisionDto
+{
+    /// <summary>
+    /// 关联库（私有、主题）
+    /// </summary>
+    public class SheetDto
+    {
+        /// <summary>
+        /// 表名
+        /// </summary>
+        public string TableName { get; set; }
+        /// <summary>
+        /// 字段名
+        /// </summary>
+        public string FieldNames { get; set; }
+        /// <summary>
+        /// 字段名字（list）
+        /// </summary>
+        public List<string> Fields { get; set; } = new List<string>();
+    }
+}

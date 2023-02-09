@@ -1,0 +1,1615 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DataSharing</name>
+    </assembly>
+    <members>
+        <member name="T:ProblemDisposal.Common.Basic.AjaxResult`1">
+            <summary>
+            通用请求返回类
+            </summary>
+        </member>
+        <member name="P:ProblemDisposal.Common.Basic.AjaxResult`1.Data">
+            <summary>
+            用户数据
+            </summary>
+        </member>
+        <member name="P:ProblemDisposal.Common.Basic.AjaxResult`1.Success">
+            <summary>
+            执行状态
+            </summary>
+        </member>
+        <member name="P:ProblemDisposal.Common.Basic.AjaxResult`1.Message">
+            <summary>
+            执行消息
+            </summary>
+        </member>
+        <member name="M:ProblemDisposal.Common.Basic.AjaxResult`1.#ctor">
+            <summary>
+            无参构造
+            </summary>
+        </member>
+        <member name="M:ProblemDisposal.Common.Basic.AjaxResult`1.#ctor(`0)">
+            <summary>
+            执行成功并返回数据
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="M:ProblemDisposal.Common.Basic.AjaxResult`1.#ctor(System.Boolean)">
+            <summary>
+            根据Success判断是否成功返回信息
+            </summary>
+            <param name="success"></param>
+        </member>
+        <member name="M:ProblemDisposal.Common.Basic.AjaxResult`1.#ctor(`0,System.String)">
+            <summary>
+            执行成功并返回数据和消息
+            </summary>
+            <param name="data"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:ProblemDisposal.Common.Basic.AjaxResult`1.#ctor(System.Boolean,System.String)">
+            <summary>
+            执行后返回是否成功和消息
+            </summary>
+            <param name="success"></param>
+            <param name="message"></param>
+        </member>
+        <member name="P:ProblemDisposal.Common.Basic.DataTablePageResult.Data">
+            <summary>
+            用户数据
+            </summary>
+        </member>
+        <member name="P:ProblemDisposal.Common.Basic.DataTablePageResult.Total">
+            <summary>
+            总条数
+            </summary>
+        </member>
+        <member name="P:ProblemDisposal.Common.Basic.DataTablePageResult.TotalPage">
+            <summary>
+            总页数
+            </summary>
+        </member>
+        <member name="P:ProblemDisposal.Common.Basic.DataTablePageResult.PageSize">
+            <summary>
+            每页大小
+            </summary>
+        </member>
+        <member name="P:ProblemDisposal.Common.Basic.DataTablePageResult.PageNumber">
+            <summary>
+            当前页数
+            </summary>
+        </member>
+        <member name="M:ProblemDisposal.Common.Basic.DataTablePageResult.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ProblemDisposal.Common.Basic.DataTablePageResult.#ctor(System.Data.DataTable,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <param name="total"></param>
+            <param name="totalPage"></param>
+            <param name="pageSize"></param>
+            <param name="pageNumber"></param>
+        </member>
+        <member name="M:ProblemDisposal.Common.Basic.DataTablePageResult.#ctor(System.Data.DataTable,System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <param name="total"></param>
+            <param name="totalPage"></param>
+        </member>
+        <member name="M:ProblemDisposal.Common.Basic.DataTablePageResult.#ctor(System.Data.DataTable,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <param name="total"></param>
+        </member>
+        <member name="T:ProgramsNetCore.Common.Basic.PageResult`1">
+            <summary>
+            分页数据
+            </summary>
+        </member>
+        <member name="P:ProgramsNetCore.Common.Basic.PageResult`1.Data">
+            <summary>
+            用户数据
+            </summary>
+        </member>
+        <member name="P:ProgramsNetCore.Common.Basic.PageResult`1.Total">
+            <summary>
+            总条数
+            </summary>
+        </member>
+        <member name="P:ProgramsNetCore.Common.Basic.PageResult`1.TotalPage">
+            <summary>
+            总页数
+            </summary>
+        </member>
+        <member name="P:ProgramsNetCore.Common.Basic.PageResult`1.PageSize">
+            <summary>
+            每页大小
+            </summary>
+        </member>
+        <member name="P:ProgramsNetCore.Common.Basic.PageResult`1.PageNumber">
+            <summary>
+            当前页数
+            </summary>
+        </member>
+        <member name="P:ProgramsNetCore.Common.Basic.PageResult`1.Msg">
+            <summary>
+            信息
+            </summary>
+        </member>
+        <member name="M:ProgramsNetCore.Common.Basic.PageResult`1.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ProgramsNetCore.Common.Basic.PageResult`1.#ctor(`0,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <param name="total"></param>
+            <param name="totalPage"></param>
+            <param name="pageSize"></param>
+            <param name="pageNumber"></param>
+        </member>
+        <member name="M:ProgramsNetCore.Common.Basic.PageResult`1.#ctor(`0,System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <param name="total"></param>
+            <param name="totalPage"></param>
+        </member>
+        <member name="M:ProgramsNetCore.Common.Basic.PageResult`1.#ctor(`0,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <param name="total"></param>
+        </member>
+        <member name="M:ProgramsNetCore.Common.DtConversionList`1.ConvertToModel(System.Data.DataTable)">
+            <summary>
+            datatable转list
+            </summary>
+            <param name="dt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProgramsNetCore.Controllers.TestController.GetDataTable(ProgramsNetCore.Models.Dto.PageDto)">
+            <summary>
+            获取DataTable
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProgramsNetCore.Controllers.TestController.GetTest">
+            <summary>
+            获取DataTable
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProgramsNetCore.Controllers.TestController.XORDecryptData(ProgramsNetCore.Models.Dto.Test.XORDEnDto)">
+            <summary>
+            XOR加解密数据
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ProgramsNetCore.Middlewares.ExceptionHandlingMiddleware">
+            <summary>
+            自定义异常捕获类
+            </summary>
+        </member>
+        <member name="M:ProgramsNetCore.PolicyRequirement.PermissionHandler.#ctor(Microsoft.AspNetCore.Authentication.IAuthenticationSchemeProvider)">
+            <summary>
+            构造函数注入
+            </summary>
+        </member>
+        <member name="T:DataSharing.Common.CloneHelper">
+            <summary>
+            克隆的帮助类
+            </summary>
+        </member>
+        <member name="M:DataSharing.Common.CloneHelper.Clone``1(System.Collections.Generic.List{``0})">
+            <summary>
+            克隆对象list，注意：要给引用类型实体加上[Serializable]特性
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DataSharing.Common.DataTableConverter">
+            <summary>
+            DataTable对象转换类
+            </summary>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.ExcelToDataTable(System.String,System.String,System.Boolean)">
+            <summary>
+            读取excel文件 保存到DataTable
+            </summary>
+            <param name="fileName"></param>
+            <param name="sheetName"></param>
+            <param name="isFirstRowColumn"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.ExcelToDataTable(System.String,System.IO.Stream,System.String,System.Boolean)">
+            <summary>
+            读取excel文件 保存到DataTable
+            </summary>
+            <param name="fileName"></param>
+            <param name="fs"></param>
+            <param name="sheetName"></param>
+            <param name="isFirstRowColumn"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.ExcelToDataTable(System.String,System.IO.Stream,System.Collections.Generic.Dictionary{System.String,System.String},System.String,System.Boolean)">
+            <summary>
+            读取excel文件 保存到DataTable
+            </summary>
+            <param name="fileName"></param>
+            <param name="fs"></param>
+            <param name="columnTypeDic"></param>
+            <param name="sheetName"></param>
+            <param name="isFirstRowColumn"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.CSV2DataTable(System.String)">
+            <summary>
+            读取csv文件成DataTable数据[如果是Unicode存储，列之间使用tab间隔，如果是utf-8存储，使用逗号间隔]
+            </summary>
+            <param name="fileName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.CSV2DataTable(System.IO.Stream)">
+            <summary>
+            读取csv文件成DataTable数据[如果是Unicode存储，列之间使用tab间隔，如果是utf-8存储，使用逗号间隔]
+            </summary>
+            <param name="fs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.CSV2DataTable(System.IO.Stream,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            读取csv文件成DataTable数据[如果是Unicode存储，列之间使用tab间隔，如果是utf-8存储，使用逗号间隔]
+            </summary>
+            <param name="fs">stream流对象</param>
+            <param name="columnTypeDic">字段列名类型映射字典</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.DataTable2CSV(System.Data.DataTable,System.String)">
+            <summary>
+            将DataTable数据写入csv文件[如果是Unicode存储，列之间使用tab间隔，如果是utf-8存储，使用逗号间隔]
+            </summary>
+            <param name="dt">DataTable数据</param>
+            <param name="AbosultedFilePath">绝对路径</param>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.DelQuota(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="str"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.DatatableToCSV(System.Data.DataTable,System.String)">
+            <summary>
+            DataTable数据导出成csv
+            </summary>
+            <param name="dt"></param>
+            <param name="fileName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.DataTableToExcel(System.Data.DataTable,System.String)">
+            <summary>
+            DataTable数据导出Excel
+            </summary>
+            <param name="data"></param>
+            <param name="filepath"></param>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.DataTableToExcel(System.Data.DataTable)">
+            <summary>
+            导出DataTable To Stream
+            </summary>
+            <param name="data">DataTable对象</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.DataTableToExcel(System.Data.DataTable,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            导出DataTable To Stream
+            </summary>
+            <param name="data">DataTable对象</param>
+            <param name="columnNameDic">字段名称映射字典</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.DataTableToBytes(System.Data.DataTable,System.Int32,System.Boolean,System.Int16)">
+            <summary>
+            DataTable写入Excel 
+            </summary>
+            <param name="data">数据源</param>
+            <param name="cell">开始写入行数 （第一条是0）</param>
+            <param name="isSetRow">是否显示序号</param>
+            <param name="fontSize">字体大小</param>
+            <returns>xls文件字节数组</returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.DataTableToBytes(System.Data.DataTable)">
+            <summary>
+            将datatable转化为Excel
+            </summary>
+            <param name="dt"></param>
+            <returns>xls文件字节数组</returns>
+        </member>
+        <member name="M:DataSharing.Common.DataTableConverter.DataTableToBytes(System.Data.DataTable,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            将datatable转化为Excel
+            </summary>
+            <param name="dt">DataTable对象</param>
+            <param name="nameDic">标题中英文名称映射</param>
+            <returns>xls文件字节数组</returns>
+        </member>
+        <member name="T:DataSharing.Common.DataTableCompareHelper">
+            <summary>
+            dataTable比较类
+            </summary>
+        </member>
+        <member name="P:DataSharing.Common.DataTableCompareHelper.Dt1">
+            <summary>
+            第一个dataTable
+            </summary>
+        </member>
+        <member name="P:DataSharing.Common.DataTableCompareHelper.Dt2">
+            <summary>
+            第二个dataTable
+            </summary>
+        </member>
+        <member name="M:DataSharing.Common.DataTableCompareHelper.#ctor(System.Data.DataTable,System.Data.DataTable)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="dataTable1">第一个dataTable</param>
+            <param name="dataTable2">第二个dataTable</param>
+        </member>
+        <member name="M:DataSharing.Common.DataTableCompareHelper.Equals">
+            <summary>
+            判断两个dataTable字段和属性是否相同
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:DataSharing.Controllers.DataCollectController">
+            <summary>
+            数据归集
+            </summary>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetSourceTableDirectory">
+            <summary>
+            源表目录菜单
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.UpdateSourceTableRackStatus(System.Int32,System.Int32)">
+            <summary>
+            修改源表上下架状态[update:2022年8月19日19:42:01]
+            </summary>
+            <param name="id">源表id</param>
+            <param name="rackStatusId">货架状态id[0:上架 1:未上架 2:下架]</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetSourceTableList(ProgramsNetCore.Models.Dto.DataCollectDto.GetSourceTableListPageDto)">
+            <summary>
+            源表目录
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetSourceTableManageList(ProgramsNetCore.Models.Dto.DataCollectDto.SourceTableManageListPageDto)">
+            <summary>
+            源表管理[sourceTableStatus:  "全部":null "上架":0 "未上架":1 "下架":2]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.CollectDataStatistics">
+            <summary>
+            归集数据统计
+            </summary>
+            <returns>[totalCount:源表数据总量 onCount:上架源表数量 offCount:下架源表数量 todoCount:未上架源表数量]</returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.SourceTableManageEdit(ProgramsNetCore.Models.Dto.DataCollectDto.DataMapManageEditDto)">
+            <summary>
+            源表管理编辑
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetDataMapDataItems(System.Int32)">
+            <summary>
+            获取原始数据目录[update:2022年8月12日11:24:00]
+            </summary>
+            <param name="dataMapId">源表id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetDataMapDataItemsAfterCleaning(System.Int32)">
+            <summary>
+            获取清洗数据目录[update:2022年8月16日11:39:28]
+            </summary>
+            <param name="dataMapId">源表id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.AddDataMapDataItems(ProgramsNetCore.Models.Dto.DataCollectDto.AddDataMapDataItemDto)">
+            <summary>
+            源表数据项新增
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.DelDataMapDataItems(System.Int32,System.Int32)">
+            <summary>
+            源表数据项删除
+            </summary>
+            <param name="dataMapId">源表id</param>
+            <param name="dataItemId">数据项id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetApplyCollect(ProgramsNetCore.Models.Dto.DataCollectDto.GetApplyCollectPageDto)">
+            <summary>
+            归集申请 [taskType 0:未申请 1:已申请]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetApprovedTask(ProgramsNetCore.Models.Dto.DataCollectDto.GetApprovedTaskQueryDto)">
+            <summary>
+            导入数据-可导入数据的申请列表[update:2022年8月16日16:21:52] 
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetDataMapDetail(System.Int32)">
+            <summary>
+            查看源表详情
+            </summary>
+            <param name="dataMapId">源表Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.EditShow(System.Int32)">
+            <summary>
+            编辑show[update:2022年8月26日17:00:20]
+            </summary>
+            <param name="dataMapId">源表Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.AddApplyTable(ProgramsNetCore.Models.Dto.DataCollectDto.AddApplyTableDto)">
+            <summary>
+            新增申请表[update:2022年8月16日16:45:36]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.EditApplyTable(ProgramsNetCore.Models.Dto.DataCollectDto.EditApplyTableDto)">
+            <summary>
+            编辑申请表[update:2022年8月24日11:32:51]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetApprovalDetail(System.Int32)">
+            <summary>
+            归集申请-流程查看
+            </summary>
+            <param name="approvalTaskId">归集申请任务Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetApprovalDataMapDetail(System.Int32)">
+            <summary>
+            归集申请-流程查看-申请表信息
+            </summary>
+            <param name="approvalTaskId">归集申请任务Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.ApprovalDel(System.Int32)">
+            <summary>
+            归集申请删除
+            </summary>
+            <param name="approvalId">审批流程id号</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetCollectionApplication(ProgramsNetCore.Models.Dto.DataCollectDto.GetCollectionApplicationPageDto)">
+            <summary>
+            审批管理列表 [Status: 0:等待审批 1:审批中 2:审批完成]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetApprovalApplicant">
+            <summary>
+            获取审批管理申请人
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.ApprovalStart(ProgramsNetCore.Models.Dto.DataCollectDto.ApprovalStartDto)">
+            <summary>
+            发起申请
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetApprovalManageList(ProgramsNetCore.Models.Dto.DataCollectDto.GetApprovalManageListPageDto)">
+            <summary>
+            审批管理
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.ApprovalProcess(ProgramsNetCore.Models.Dto.DataCollectDto.ApprovalProcessQueryDto)">
+            <summary>
+            审批处理[update:2022年9月2日16:48:36]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.ApprovalListProcess(ProgramsNetCore.Models.Dto.DataCollectDto.ApprovalListProcessDto)">
+            <summary>
+            一键审批[update:2022年9月2日16:48:17]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetClassifyManage(ProgramsNetCore.Models.Dto.DataCollectDto.GetClassifyManageQueryDto)">
+            <summary>
+            分类分级管理
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetClassifyManage(System.Int32)">
+            <summary>
+            分类分级管理详情
+            </summary>
+            <param name="dataMapId">源表Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.EditClassifyManage(ProgramsNetCore.Models.Dto.DataCollectDto.ClassifyManageEditDto)">
+            <summary>
+            分类分级编辑
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetClassifyManageDetail(System.Int32)">
+            <summary>
+            分类分级管理查看/申请表信息
+            </summary>
+            <param name="dataMapId">源表Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetClassifyManageDic">
+            <summary>
+            获取所有分级分类标签状态
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetDomains(ProgramsNetCore.Models.Dto.DataCollectDto.GetDomainsQueryDto)">
+            <summary>
+            领域管理首页type:[0:数据来源 1:分层类型][update:2022年8月11日15:39:48]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.AddDomains(ProgramsNetCore.Models.Dto.DataCollectDto.AddDomainsDto)">
+            <summary>
+            领域管理编辑type:[0:数据来源 1:分层类型][update:2022年8月11日15:39:52]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.EditDomains(ProgramsNetCore.Models.Dto.DataCollectDto.EditDomainsDto)">
+            <summary>
+            领域管理编辑type:[0:数据来源 1:分层类型][update:2022年8月11日15:39:58]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.DelDomains(ProgramsNetCore.Models.Dto.DataCollectDto.DelDomainDto)">
+            <summary>
+            领域管理删除type:[0:数据来源 1:分层类型][update:2022年8月11日15:40:03]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetPrivateLib(ProgramsNetCore.Models.Dto.DataCollectDto.GetPrivateLibraryQueryDto)">
+            <summary>
+            获取私有库列表 [update:2022年10月11日19:22:03]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.TransferLib(ProgramsNetCore.Models.Dto.DataCollectDto.TransferLibQueryDto)">
+            <summary>
+            私有库-转库申请[update:2022年10月11日19:23:21]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetTransferLibRecords(ProgramsNetCore.Models.Dto.PageDto)">
+            <summary>
+            获取转库记录[update:2022年10月11日19:56:04]
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.PrivateLibDel(System.Int32)">
+            <summary>
+            私有库-删除[update:2022年9月7日15:34:10]
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetFieldsInfo(ProgramsNetCore.Models.Dto.DataCollectDto.GetFieldsInfoQueryDto)">
+            <summary>
+            获取表字段信息[update:2022年9月13日15:35:02]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetDataRelationUnit(ProgramsNetCore.Models.Dto.PageDto)">
+            <summary>
+            源表数据分析-涉及数据单位总数[update:2022年9月16日10:42:17]
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetDataMapTotalCount(ProgramsNetCore.Models.Dto.PageDto)">
+            <summary>
+            源表数据分析-数据表总数[update:2022年9月16日10:42:17]
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.GetUsedDataInfo">
+            <summary>
+            源表数据分析-数据使用情况[update:2022年9月16日10:42:17]
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollectController.IsTableExist(System.String,System.String)">
+            <summary>
+            判断表是否存在
+            </summary>
+            <param name="tableName">表名</param>
+            <param name="databaseName">数据库名称</param>
+            <returns>1:存在;0:不存在</returns>
+        </member>
+        <member name="T:DataSharing.Controllers.DataCollisionCollectController">
+            <summary>
+            数据碰撞
+            </summary>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetModel(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            获取单个模型
+            </summary>
+            <param name="dto">ModelId</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetModelList">
+            <summary>
+            获取所有模型List
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetModelPageList(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            获取模型目录分页
+            </summary>
+            <param name="dto">Tissue,Region,Name,ExtensionStatus,Status,Deleted,Approver</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.AddModel(ProgramsNetCore.Models.Dto.DataCollisionDto.DataModelDto)">
+            <summary>
+            新增.
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.UpdateModel(ProgramsNetCore.Models.Dto.DataCollisionDto.DataModelDto)">
+            <summary>
+            只更新模型，删除、审核可用
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.UpdateModelWithSheet(ProgramsNetCore.Models.Dto.DataCollisionDto.DataModelDto)">
+            <summary>
+            更新.
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetTask(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            获取单个任务
+            </summary>
+            <param name="dto">ModelId</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetTaskList">
+            <summary>
+            获取所有任务List
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetTaskPageList(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            获取任务目录分页
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.AddTask(ProgramsNetCore.Models.Dto.DataCollisionDto.DataTaskDto)">
+            <summary>
+            新增.
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.UpdateTask(ProgramsNetCore.Models.Dto.DataCollisionDto.DataTaskDto)">
+            <summary>
+            只更新任务，删除、审核可用
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.UpdateTaskWithSheet(ProgramsNetCore.Models.Dto.DataCollisionDto.DataTaskDto)">
+            <summary>
+            更新.
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetTableInfo(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            获取数据库的表结构
+            </summary>
+            <param name="dto">TableName,PatternName</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetConditionsList(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            获取所有过滤条件List
+            </summary>
+            <returns>Type,ModelId,TableName</returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.SavaConditions(System.Collections.Generic.List{ProgramsNetCore.Models.Dto.DataCollisionDto.DataConditionDto})">
+            <summary>
+            保存筛选条件
+            </summary>
+            <param name="list"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetTableRelationships(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            获取某张表的所有关系
+            </summary>
+            <param name="dto">TableNameA</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetTableRelationship(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            获取两张表之间的关联
+            </summary>
+            <param name="dto">TableNameA，TableNameB</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.AddTableRelationship(ProgramsNetCore.Models.Dto.DataCollisionDto.TableToTableDto)">
+            <summary>
+            保存两张表之间的关系
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.UpdateTableRelationship(ProgramsNetCore.Models.Dto.DataCollisionDto.TableToTableDto)">
+            <summary>
+            更新两张表之间的关联
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.DeleteTableRelationship(ProgramsNetCore.Models.Dto.DataCollisionDto.TableToTableDto)">
+            <summary>
+            删除两张表之间的关联
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetSheetWithFields(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            获取库以及表结构
+            </summary>
+            <param name="dto">PublicOrPrivate,Type,ModelId</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetAllSheetWithFields(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            获取全部库以及表结构
+            </summary>
+            <param name="dto">PublicOrPrivate,Type,ModelId</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetTopologyList(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            获取某个模型或者任务的所有拓扑图节点
+            </summary>
+            <param name="dto">Type，ModelId</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.SaveTopology(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            保存某个模型或者任务的所有拓扑图节点
+            </summary>
+            <param name="dto">Type，ModelId,TopologyDtos</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.Preview(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            预览
+            </summary>
+            <param name="dto">TableName,DataConditions</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetExamineLogPageList(ProgramsNetCore.Models.Dto.DataCollisionDto.ExamineLogQueryDto)">
+            <summary>
+            获取模型审核日志目录分页
+            </summary>
+            <param name="dto">Tissue,Realm,Region,Type,Operation,ModelName,Operator</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.AddExamineLog(ProgramsNetCore.Models.Dto.DataCollisionDto.DataModelExamineLogDto)">
+            <summary>
+            保存模型审核日志
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.SaveSql(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            生成某个模型或者任务的sql
+            </summary>
+            <param name="dto">Type,ModelId</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.GetRoleUserInfo(System.Int32)">
+            <summary>
+            根据角色获取用户信息
+            </summary>
+            <param name="roletype">1：系统管理员；2：安全保密员；3：安全审计员；4：操作员；5：超级管理员；6：管理员；</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataCollisionCollectController.ExcuteSql(ProgramsNetCore.Models.Dto.DataCollisionDto.DataCollisionQueryDto)">
+            <summary>
+            执行界面上的sql
+            </summary>
+            <param name="dto">Sql</param>
+            <returns></returns>
+        </member>
+        <member name="T:DataSharing.Controllers.DataManageController">
+            <summary>
+            数据管理
+            </summary>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetDataMapList(ProgramsNetCore.Models.Dto.DataManageDto.GetDataMapListQueryDto)">
+            <summary>
+            查询数据源表[update:2022年8月25日14:20:40]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetDataMapFileds(ProgramsNetCore.Models.Dto.DataManageDto.GetDataMapFiledsDto)">
+            <summary>
+            查询数据源表字段[update:2022年8月25日14:45:13]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.DataTableJoinV2(ProgramsNetCore.Models.Dto.DataManageDto.DataTableJoinQueryDto[])">
+            <summary>
+            数据表整合[update:2022年8月25日15:41:13]
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.DataTableJoin(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            数据表整合{ "表名" : "字段名" }
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetRuleInfo(System.Int32)">
+            <summary>
+            获取规则详情 type 1：原生规则；2：个性化规则
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetRulePage(ProgramsNetCore.Models.Dto.PageDto)">
+            <summary>
+            获取规则列表
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.AddRule(ProgramsNetCore.Models.Dto.DataManageDto.AddRuleDto)">
+            <summary>
+            增加规则
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.JoinRule(ProgramsNetCore.Models.Dto.DataManageDto.JoinRuleDto)">
+            <summary>
+            关联个性化规则
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetNextNO(System.String)">
+            <summary>
+            生成下一个No
+            </summary>
+            <param name="last"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.SplitTable(ProgramsNetCore.Models.Dto.DataManageDto.SplitInfoDto)">
+            <summary>
+            分割表
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetSplitTablePage(ProgramsNetCore.Models.Dto.PageDto)">
+            <summary>
+            分页获取拆分数据
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetChildInfo(System.Int32)">
+            <summary>
+            获取分表信息
+            </summary>
+            <param name="dataid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetSourceTableName">
+            <summary>
+            获取表名称
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetFieldInfo(ProgramsNetCore.Models.Dto.DataManageDto.GetFieldInfoDto)">
+            <summary>
+            获取表字段
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetConditionsInfo(System.Int32)">
+            <summary>
+            获取条件信息
+            </summary>
+            <param name="type">类型1：基础条件；2：且或；3：括号；</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.SearchingTotal(ProgramsNetCore.Models.Dto.DataManageDto.SearchingTotalDto)">
+            <summary>
+            检索
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetSplitTableFiles(System.Int32)">
+            <summary>
+            获取拆分表字段
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.DataMapping(ProgramsNetCore.Models.Dto.DataManageDto.DataMappingInfoDto)">
+            <summary>
+            数据映射
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.MappingListPage(ProgramsNetCore.Models.Dto.DataManageDto.GetMappingPage)">
+            <summary>
+            分页获取映射列表
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.GetMappingInfo(System.Int32)">
+            <summary>
+            根据数据Id获取映射信息
+            </summary>
+            <param name="dataid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataManageController.UpdateMapping(ProgramsNetCore.Models.Dto.DataManageDto.UpdateMappingDto)">
+            <summary>
+            修改映射
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DataSharing.Controllers.DataMigrationController">
+            <summary>
+            数据迁移
+            </summary>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.TestConnection(ProgramsNetCore.Models.Dto.DataMigration.TestConnInfoDto)">
+            <summary>
+            测试链接
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.SubmitApplication(ProgramsNetCore.Models.Dto.DataMigration.DataMigrationInfoDto)">
+            <summary>
+            提交互导申请
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.GetPageDataMigrationList(ProgramsNetCore.Models.Dto.DataMigration.DataMigrationListDto)">
+            <summary>
+            获取数据迁移列表
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.GetPageTransconductanceList(ProgramsNetCore.Models.Dto.DataMigrationDto.GetDataMigrationDto)">
+            <summary>
+            获取互导申请列表
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.DataMigrationApproval(ProgramsNetCore.Models.Dto.DataMigration.ApprovalDto)">
+            <summary>
+            数据审批
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.JoinApplyCar(ProgramsNetCore.Models.Dto.DataMigration.JoinApplyCarDto)">
+            <summary>
+            加入申请车
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.AppliyCarCompleted(ProgramsNetCore.Models.Dto.DataMigration.SubmitApplyDto)">
+            <summary>
+            提交购物车申请
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.ExportExcelAsync(System.Int32)">
+            <summary>
+            导出Excel
+            </summary>
+            <param name="taskId">任务Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.GetDBDept">
+            <summary>
+            获取数源部门信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.GetDeptTableName(System.Int32)">
+            <summary>
+            根据部门id获取数据表
+            </summary>
+            <param name="deptId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.DeleteShoppingCart(ProgramsNetCore.Models.Dto.DataSecurity.DeleteShoppingCartDto)">
+            <summary>
+            删除购物车项
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.GetDataInfoPage(ProgramsNetCore.Models.Dto.DataMigration.GetDataInfoPageDto)">
+            <summary>
+            分页获取数据表数据
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.GetTransconductanceApplicationInfo(ProgramsNetCore.Models.Dto.DataMigration.GetMigrationApprovalDto)">
+            <summary>
+            获取迁移申请信息
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.GetHasten(ProgramsNetCore.Models.Dto.DataMigration.AddHastenInfoDto)">
+            <summary>
+            催办
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.ExecuteTask(System.Int32)">
+            <summary>
+            执行互导任务
+            </summary>
+            <param name="taskid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.DeleteTask(ProgramsNetCore.Models.Dto.DataMigrationDto.DeleteTaskDto)">
+            <summary>
+            删除任务
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataMigrationController.GetTransconductanceDataInfo(System.Int32)">
+            <summary>
+            获取互导申请数据详情
+            </summary>
+            <param name="taskid"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DataSharing.Controllers.DataSecurityController">
+            <summary>
+            数据安全管理模块
+            </summary>
+        </member>
+        <member name="M:DataSharing.Controllers.DataSecurityController.GetDataSecurityPage(ProgramsNetCore.Models.Dto.DataSecurity.DataInfoDto)">
+            <summary>
+            分页获取数据安全管理模块列表
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataSecurityController.GetAuthorityInfo(System.Int32,System.Int32)">
+            <summary>
+            获取当前数据表权限列表
+            </summary>
+            <param name="dataMapId">数据Id</param>
+            <param name="type">权限类型：1：用户；2：单位</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataSecurityController.SettingAuthority(ProgramsNetCore.Models.Dto.DataMigration.AddAuthorityDto)">
+            <summary>
+            [8.11更新]增加数据表权限
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataSecurityController.UpdateAuthority(ProgramsNetCore.Models.Dto.DataMigration.UpdateAuthorityDto)">
+            <summary>
+            [8.11增加]修改权限
+            </summary>
+            <param name="Dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataSecurityController.GetRoleInfo(System.Int32)">
+            <summary>
+            获取角色信息：1：用户；2：部门
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataSecurityController.GetSecretMode">
+            <summary>
+            获取加密模式
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataSecurityController.GetFiledInfo(System.Int32)">
+            <summary>
+            根据数据Id获取映射表字段
+            </summary>
+            <param name="dataid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataSecurityController.DataEncryption(ProgramsNetCore.Models.Dto.DataSecurity.DataEncryptionInfoDto)">
+            <summary>
+            数据加密
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataSecurityController.DataDecryption(ProgramsNetCore.Models.Dto.DataSecurity.DataDecryptionInfoDto)">
+            <summary>
+            解密
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataSecurityController.GetDataChild">
+            <summary>
+            获取分表选项
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:DataSharing.Controllers.DataServiceController">
+            <summary>
+            数据服务
+            </summary>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.TurnToDataService(System.Int32)">
+            <summary>
+            转数据服务
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.GetApplicationList(ProgramsNetCore.Models.Dto.DataServiceDto.GetApplicationListDto)">
+            <summary>
+            获取申请列表 [2022年09月16 14:42:19]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.InitiateApplication(System.Collections.Generic.List{ProgramsNetCore.Models.Dto.DataServiceDto.InitiateApplicationDto})">
+            <summary>
+            发起申请
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.GetAuthorizationList(ProgramsNetCore.Models.Dto.DataServiceDto.GetAuthorizationListDto)">
+            <summary>
+            获取服务授权列表
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.Authorization(ProgramsNetCore.Models.Dto.DataServiceDto.AddAuthorizationDto)">
+            <summary>
+            授权 [2022年09月15 16:28:34]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.GetDay(System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            计算日期之间的天数
+            </summary>
+            <param name="date1"></param>
+            <param name="date2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.GetUserId">
+            <summary>
+            获取登入用户的Id
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.GetServiceDirectory(ProgramsNetCore.Models.Dto.DataServiceDto.GetServiceDto)">
+            <summary>
+            获取服务目录
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.CancelTransferService(ProgramsNetCore.Models.Dto.DataServiceDto.CancelTransferServiceDto)">
+            <summary>
+            撤销转服务
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.JoinApplyCar(ProgramsNetCore.Models.Dto.DataMigration.JoinApplyCarDto)">
+            <summary>
+            加入申请车(new) [2022年09月27 09:04:57]
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.DeleteApplyCar(ProgramsNetCore.Models.Dto.DataServiceDto.DeleteApplyCarDto)">
+            <summary>
+            删除申请车申请 [2022年09月16 14:22:30]
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.DataServiceController.GetDataMapDetail(System.Int32)">
+            <summary>
+            查看源表详情 [2022年09月27 11:22:28]
+            </summary>
+            <param name="dataMapId">源表Id</param>
+            <returns></returns>
+        </member>
+        <member name="T:DataSharing.Controllers.ExcelController">
+            <summary>
+            数据导入导出
+            </summary>
+        </member>
+        <member name="M:DataSharing.Controllers.ExcelController.DownloadTemplatefile(System.Int32)">
+            <summary>
+            下载模板文件[UpdateTime:2022年8月24日10:02:25]
+            </summary>
+            <param name="dataMapId">源表id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.ExcelController.DownloadDatafile(System.Int32)">
+            <summary>
+            下载数据源文件[UpdateTime:2022年8月10日10:42:41]
+            </summary>
+            <param name="dataMapId">源表id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.ExcelController.DatasInsertIntoTable(System.Int32,Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            数据导入 [只支持Excel]
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:DataSharing.Controllers.HomeController">
+            <summary>
+            首页
+            </summary>
+        </member>
+        <member name="M:DataSharing.Controllers.HomeController.GetDataConverge">
+            <summary>
+            数据汇聚
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.HomeController.Index">
+            <summary>
+            总体运行情况
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.HomeController.Search(ProgramsNetCore.Models.Dto.HomeDto.SearchQueryDto)">
+            <summary>
+            检索
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.HomeController.SearchRelation(ProgramsNetCore.Models.Dto.HomeDto.SearchRelationQueryDto)">
+            <summary>
+            左侧相关检索
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.LoginController.Login(ProgramsNetCore.Models.Dto.LoginDto.LoginDto)">
+            <summary>
+            登录
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.LoginController.ChangePwd(ProgramsNetCore.Models.Dto.LoginDto.ChangePwdDto)">
+            <summary>
+            修改密码
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.LoginController.GetOrgStructure(System.Nullable{System.Int32})">
+            <summary>
+            获取组织架构
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.LoginController.OrgAdd(ProgramsNetCore.Models.Dto.LoginDto.OrgAddAndEditDto)">
+            <summary>
+            组织架构-增
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.LoginController.OrgDel(System.Int32)">
+            <summary>
+            组织架构-删
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.LoginController.OrgEdit(ProgramsNetCore.Models.Dto.LoginDto.OrgAddAndEditDto)">
+            <summary>
+            组织架构-改
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:DataSharing.Controllers.LogManageController">
+            <summary>
+            日志管理
+            </summary>
+        </member>
+        <member name="M:DataSharing.Controllers.LogManageController.GetPlatformLogs(ProgramsNetCore.Models.Dto.LogManageDto.GetPlatformLogsQueryDto)">
+            <summary>
+            平台用户操作日志
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.LogManageController.GetDbLogs(ProgramsNetCore.Models.Dto.LogManageDto.GetDbLogsQueryDto)">
+            <summary>
+            数据库操作日志
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DataSharing.Controllers.RepairOrderController">
+            <summary>
+                工单
+            </summary>
+        </member>
+        <member name="M:DataSharing.Controllers.RepairOrderController.AddRepairOrder(ProgramsNetCore.Models.Dto.RepairOrderDto.AddRepairOrderDto)">
+            <summary>
+                添加工单
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.RepairOrderController.GetOrderLevel">
+            <summary>
+                获取工单等级
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.RepairOrderController.GetPageOrderInfo(ProgramsNetCore.Models.Dto.RepairOrderDto.GetOrderInfoDto)">
+            <summary>
+                分页获取工单信息
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.RepairOrderController.GetAllOrderDetails(System.Int32)">
+            <summary>
+                获取工单详情信息
+            </summary>
+            <param name="taskid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.RepairOrderController.GetOrderDetails(System.Int32)">
+            <summary>
+                获取工单详情信息
+            </summary>
+            <param name="taskid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.RepairOrderController.SubmitOrder(ProgramsNetCore.Models.Dto.RepairOrderDto.SubmitOrderDto)">
+            <summary>
+            提交工单
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DataSharing.Controllers.SignalRHubController">
+            <summary>
+            SignalR网络通信
+            </summary>
+        </member>
+        <member name="M:DataSharing.Controllers.SignalRHubController.SendMessage(System.String,System.String)">
+            <summary>
+            发送信息，接收‘ReceiveMessage’
+            </summary>
+            <param name="msg"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.GetDepartsList">
+            <summary>
+            获取部门列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.GetRolesList">
+            <summary>
+            获取角色列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.GetUserManageList(ProgramsNetCore.Models.Dto.UserManageDto.GetUserManageListDto)">
+            <summary>
+            人员管理
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.GetUser(System.Int32)">
+            <summary>
+            查询id用户
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.AddUser(ProgramsNetCore.Models.Dto.UserManageDto.AddUserDto)">
+            <summary>
+            新增人员
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.UserEdit(ProgramsNetCore.Models.Dto.UserManageDto.EditUserDto)">
+            <summary>
+            编辑人员
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.PasswordReset(System.Int32)">
+            <summary>
+            密码重置
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.DeleteUser(System.Int32)">
+            <summary>
+            删除人员
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.GetGroupRoleUserList(ProgramsNetCore.Models.Dto.UserManageDto.GetGroupRoleUserListQueryDto)">
+            <summary>
+            角色成员列表
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.GetGroupRoleList(System.Int32,System.Int32)">
+            <summary>
+            获取角色分组列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.GetGroupRoleUsersList">
+            <summary>
+            获取角色分组列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.GetAllPermissions">
+            <summary>
+            获取权限列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.GetRolePermissions(System.Int32)">
+            <summary>
+            获取角色权限
+            </summary>
+            <param name="roleId">角色Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.GetRolePermissionsMenu(System.Int32)">
+            <summary>
+            获取角色权限菜单
+            </summary>
+            <param name="roleId">角色Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.GetRolePermissions(ProgramsNetCore.Models.Dto.UserManageDto.GetRolePermissionsDto)">
+            <summary>
+            编辑角色权限
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.AddRole(ProgramsNetCore.Models.Dto.UserManageDto.AddRoleDto)">
+            <summary>
+            新增角色
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Controllers.UserManageController.AddGroup(ProgramsNetCore.Models.Dto.UserManageDto.AddGroupDto)">
+            <summary>
+            新增分组
+            </summary>
+            <param name="dto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DataSharing.Filter.ModelStateExtensions.GetValidationSummary(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary,System.String)">
+            <summary>
+            获取验证消息提示并格式化提示
+            </summary>
+        </member>
+        <member name="P:DataSharing.Filter.PermissionFilterAttribute.PermissionName">
+            <summary>
+            权限名称
+            </summary>
+        </member>
+    </members>
+</doc>

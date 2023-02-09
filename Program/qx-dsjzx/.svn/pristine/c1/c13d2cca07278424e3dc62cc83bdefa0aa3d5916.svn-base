@@ -1,0 +1,482 @@
+﻿using AutoMapper;
+using DataSharing.Common;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
+using Models;
+using ProblemDisposal.Common.Basic;
+using ProgramsNetCore.Common;
+using ProgramsNetCore.Common.Basic;
+using ProgramsNetCore.IService;
+using ProgramsNetCore.Models.Dto;
+using ProgramsNetCore.Models.Dto.DataMigration;
+using ProgramsNetCore.Models.Dto.DataServiceDto;
+using SqlSugar;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.DirectoryServices.Protocols;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace DataSharing.Controllers
+{
+    /// <summary>
+    /// 数据服务
+    /// </summary>
+    [Route("")]
+    [ApiController]
+    public class DataServiceController : ControllerBase
+    {
+        private readonly IDataServiceJoinService _dataServiceJoinService;
+        private readonly IDataServiceTaskInfoService _dataServiceTaskInfoService;
+        private readonly IGroupService _groupService;
+        private readonly IOrgService _orgService;
+        private readonly IAuthoriyService _authoriyService;
+        private readonly IDataTableService _dataTableService;
+        private readonly IPublicTaskService _publicTaskService;
+        private readonly IProcessService _processService;
+        private readonly IDataMapService _dataMapService;
+        private readonly IServiceApplicationTaskInfoService _serviceApplicationTaskInfoService;
+        private readonly IUserService _userService;
+        private readonly IRoleService _roleService;
+        private readonly IAttributionService _attributionService;
+
+        public IMapper Mapper { get; }
+
+        public DataServiceController(IDataServiceJoinService dataServiceJoinService, IDataServiceTaskInfoService dataServiceTaskInfoService, IGroupService groupService, IOrgService orgService, IAuthoriyService authoriyService, IDataTableService dataTableService, IPublicTaskService publicTaskService, IProcessService processService, IDataMapService dataMapService, IServiceApplicationTaskInfoService serviceApplicationTaskInfoService, IUserService userService, IRoleService roleService, IAttributionService attributionService, IMapper mapper)
+        {
+            _dataServiceJoinService = dataServiceJoinService;
+            _dataServiceTaskInfoService = dataServiceTaskInfoService;
+            _groupService = groupService;
+            _orgService = orgService;
+            _authoriyService = authoriyService;
+            _dataTableService = dataTableService;
+            _publicTaskService = publicTaskService;
+            _processService = processService;
+            _dataMapService = dataMapService;
+            _serviceApplicationTaskInfoService = serviceApplicationTaskInfoService;
+            _userService = userService;
+            _roleService = roleService;
+            _attributionService = attributionService;
+            Mapper = mapper;
+        }
+
+        /// <summary>
+        /// 转数据服务
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<AjaxResult<string>> TurnToDataService(int Id)
+        {
+            var dataMap = await _dataMapService.GetEntity(m => m.Id == Id);
+            if (dataMap == null)
+            {
+                return new AjaxResult<string>(false, "数据不存在");
+            }
+            dataMap.UpdateTime = DateTime.Now;
+            dataMap.IsDataService = true;
+            var res = await _dataMapService.UpdateColumn(dataMap, m => new { m.UpdateTime, m.IsDataService });
+
+            //await Logger.AddPlatformLog("转数据服务", LogType.DataOperation);
+
+            if (res > 0)
+            {
+                return new AjaxResult<string>("转数据服务成功");
+            }
+            else
+            {
+                return new AjaxResult<string>(false, "转数据服务失败");
+            }
+
+        }
+
+        /// <summary>
+        /// 获取申请列表 [2022年09月16 14:42:19]
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<PageResult<List<ResultApplicationListDto>>> GetApplicationList(GetApplicationListDto dto)
+        {
+            RefAsync<int> total = 0;
+
+            string sql = "";
+            if (dto.Type == 0)
+            {
+                sql = "select pt.Id as Id,d.Id as TableId,d.`Name`,(select GroupName from cloud_role_group g join cloud_role r on g.Id=r.GroupId join cloud_user_role ur on ur.RoleId=r.Id where UserId=ds.UserId) as Area,(select Attribution from attribution where id=d.attribution) as SourceUnit,(select real_name from cloud_user where id=ds.UserId) as Applicant,ds.CreateTime as ApplyDate,s.`Status`,timestampdiff( DAY, pt.StartTime, pt.EndTime ) AS ApplyTime from dataservicetaskinfo ds join datamap d on ds.AssociativeTable=d.Id join public_task pt on ds.Id=pt.InfoRelation left join serviceapplicationtaskinfo s on pt.Id=s.TaskId where pt.TaskType=3 and pt.`Status` =0 order by s.`Status` desc";
+            }
+            else if(dto.Type == 1)
+            {
+                sql = "select pt.Id as Id,d.Id as TableId,d.`Name`,(select GroupName from cloud_role_group g join cloud_role r on g.Id=r.GroupId join cloud_user_role ur on ur.RoleId=r.Id where UserId=ds.UserId) as Area,(select Attribution from attribution where id=d.attribution) as SourceUnit,(select real_name from cloud_user where id=ds.UserId) as Applicant,ds.CreateTime as ApplyDate,s.`Status`,timestampdiff( DAY, pt.StartTime, pt.EndTime ) AS ApplyTime from dataservicetaskinfo ds join datamap d on ds.AssociativeTable=d.Id join public_task pt on ds.Id=pt.InfoRelation left join serviceapplicationtaskinfo s on pt.Id=s.TaskId where pt.TaskType=3 and s.`Status`=0";
+            }
+            else if (dto.Type == 2)
+            {
+                sql = "select pt.Id as Id,d.Id as TableId,d.`Name`,(select GroupName from cloud_role_group g join cloud_role r on g.Id=r.GroupId join cloud_user_role ur on ur.RoleId=r.Id where UserId=ds.UserId) as Area,(select Attribution from attribution where id=d.attribution) as SourceUnit,(select real_name from cloud_user where id=ds.UserId) as Applicant,ds.CreateTime as ApplyDate,s.`Status`,timestampdiff( DAY, pt.StartTime, pt.EndTime ) AS ApplyTime from dataservicetaskinfo ds join datamap d on ds.AssociativeTable=d.Id join public_task pt on ds.Id=pt.InfoRelation left join serviceapplicationtaskinfo s on pt.Id=s.TaskId where pt.TaskType=3 and s.`Status`=1";
+            }
+            var res = await _dataTableService.GetEntityPageList<ResultApplicationListDto>(sql, dto.PageIndex, dto.PageSize, total);
+
+            //await Logger.AddPlatformLog("获取数据服务申请列表", LogType.DataAccess);
+
+            if (res != null && res.Count > 0)
+            {
+                var totalPage = GetTotalPage.Get(total, dto.PageSize);
+                return new PageResult<List<ResultApplicationListDto>>(res, total, totalPage, dto.PageSize, dto.PageIndex);
+            }
+            else
+            {
+                return new PageResult<List<ResultApplicationListDto>>(new List<ResultApplicationListDto>(), 0);
+            }
+        }
+
+        /// <summary>
+        /// 发起申请
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<AjaxResult<string>> InitiateApplication(List<InitiateApplicationDto> dtos)
+        {
+            var userId = GetUserId();
+            var roleId = HttpContext.User.Claims.Where(m => m.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").FirstOrDefault()?.Value.ToInt32();
+            if (userId == null)
+            {
+                return new AjaxResult<string>(false, "登入用户Id获取失败");
+            }
+            List<int> errorId = new List<int>();
+
+            foreach (var dto in dtos)
+            {
+                if (dto.StartTime == null || dto.EndTime == null)
+                {
+                    return new AjaxResult<string>(false, "时间不能为空");
+                }
+                else
+                {
+                    if (dto.EndTime < DateTime.Now)
+                    {
+                        return new AjaxResult<string>(false, "时间有误");
+                    }
+                }
+            }
+
+            foreach (var dto in dtos)
+            {
+                //判断任务是否存在
+                var task = await _publicTaskService.GetEntity(m => m.Id == dto.Id);
+                if (task == null)
+                {
+                    errorId.Add(dto.Id);
+                    continue;
+                }
+
+                //创建任务
+                //var task = await _publicTaskService.ValueAdd(new public_task
+                //{
+                //    StartTime = dto.StartTime,
+                //    EndTime = dto.EndTime,
+                //    Status = 1,
+                //    TaskType = 3,
+                //    InfoRelation = dto.Id
+                //});
+                //创建流程
+                var processId = await _processService.IdAdd(new process
+                {
+                    UserId = userId,
+                    TaskId = task.Id,
+                    Describe = "发起服务申请",
+                    Status = 1,
+                    CreateTime = DateTime.Now
+                });
+                //更新任务
+                await _publicTaskService.UpdateColumn(new public_task { Id = task.Id, StartTime = dto.StartTime, EndTime = dto.EndTime, Status = 1, CurrentProcess = processId }, m => new { m.StartTime, m.EndTime, m.Status, m.CurrentProcess });
+                var groupId = (await _roleService.GetEntity(m => m.Id == roleId))?.GroupId;
+                //var datamap = await _dataTableService.GetEntity<datamap>($"select Name,Attribution from datamap d where d.Id in (select ds.AssociativeTable from dataservicetaskinfo ds join public_task pt on ds.Id=pt.InfoRelation where pt.Id={task.Id})");
+                var datamap = await _dataServiceJoinService.GetDatamap(task.Id);
+                //添加关联表数据
+                await _serviceApplicationTaskInfoService.Add(new serviceapplicationtaskinfo()
+                {
+                    Applicant = userId,
+                    TaskId = task.Id,
+                    Status = 0,
+                    GroupId = groupId,
+                    Attribution = datamap.Attribution,
+                    CreateTime = DateTime.Now
+                });
+            }
+
+            //await Logger.AddPlatformLog("发起数据服务申请", LogType.DataApply);
+
+            return new AjaxResult<string>($"发起申请成功{(errorId.Count > 0 ? $"任务: {string.Join(',', errorId.ToArray())}不存在" : "")}");
+        }
+
+        /// <summary>
+        /// 获取服务授权列表
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<PageResult<List<ResultAuthorizationListDto>>> GetAuthorizationList(GetAuthorizationListDto dto)
+        {
+            RefAsync<int> total = 0;
+
+            var userId = GetUserId();
+            var roleId = HttpContext.User.Claims.Where(m => m.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").FirstOrDefault()?.Value.ToInt32();
+            if (userId == null)
+            {
+                return new PageResult<List<ResultAuthorizationListDto>>("登入用户Id获取失败");
+            }
+            var groupId = (await _roleService.GetEntity(m => m.Id == roleId))?.GroupId;
+
+            List<serviceapplicationtaskinfo> list = new List<serviceapplicationtaskinfo>();
+
+            //获取待授权的分页列表
+            if (dto.Type == 0)
+            {
+                list = await _serviceApplicationTaskInfoService.GetEntitys(m => m.GroupId == groupId && m.Status == 0, dto.PageIndex, dto.PageSize, total);
+            }
+            //获取授权记录
+            else
+            {
+                list = await _serviceApplicationTaskInfoService.GetEntitys(m => m.GroupId == groupId && m.Status != 0, dto.PageIndex, dto.PageSize, total);
+            }
+
+            List<ResultAuthorizationListDto> res = new List<ResultAuthorizationListDto>();
+            if (list != null && list.Count > 0)
+            {
+                foreach (var table in list)
+                {
+                    var task = await _publicTaskService.GetEntity(m => m.Id == table.TaskId);
+                    //var datamap = await _dataTableService.GetEntity<datamap>($"select Name,Attribution from datamap d where d.Id in (select ds.AssociativeTable from dataservicetaskinfo ds join public_task pt on ds.Id=pt.InfoRelation where pt.Id={task.Id})");
+                    var datamap = await _dataServiceJoinService.GetDatamap(task.Id);
+                    res.Add(new ResultAuthorizationListDto
+                    {
+                        Id = table.Id,
+                        TableId = datamap.Id,
+                        Name = datamap.Name,
+                        Area = (await _groupService.GetEntity(m => m.Id == table.GroupId))?.GroupName,
+                        Applicant = (await _userService.GetEntity(m => (int)m.id == table.Applicant.Value))?.real_name,
+                        SourceUnit = (await _attributionService.GetEntity(m => m.Id == datamap.Attribution))?.Attribution,
+                        ApplyDate = table.CreateTime,
+                        ApplyTime = GetDay(task.StartTime, task.EndTime),
+                        Status = table.Status
+                    });
+
+                }
+                var totalPage = GetTotalPage.Get(total, dto.PageSize);
+                return new PageResult<List<ResultAuthorizationListDto>>(res, total, totalPage, dto.PageSize, dto.PageIndex);
+            }
+
+            //await Logger.AddPlatformLog("获取数据服务授权列表", LogType.DataAccess);
+
+            return new PageResult<List<ResultAuthorizationListDto>>(new List<ResultAuthorizationListDto>(), 0);
+
+        }
+
+        /// <summary>
+        /// 授权 [2022年09月15 16:28:34]
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<AjaxResult<string>> Authorization(AddAuthorizationDto dto)
+        {
+            var userId = GetUserId();
+            if (userId == null)
+            {
+                return new AjaxResult<string>(false, "登入用户Id获取失败");
+            }
+
+            //授权失败的表Id
+            List<int> tIdError = new List<int>();
+
+            foreach (var Id in dto.Ids)
+            {
+                //获取关联表数据
+                var table = await _serviceApplicationTaskInfoService.GetEntity(m => m.Id == Id);
+                if (table == null)
+                {
+                    tIdError.Add(Id);
+                    continue;
+                }
+                //获取任务
+                var task = await _publicTaskService.GetEntity(m => m.Id == table.TaskId);
+                if (task == null)
+                {
+                    tIdError.Add(table.Id);
+                    continue;
+                }
+                //获取申请人数据
+                var applicantUser = await _userService.GetEntity(m => (int)m.id == table.Applicant);
+                if (applicantUser == null)
+                {
+                    tIdError.Add(table.Id);
+                    continue;
+                }
+
+                //添加审批流程
+                var processId = await _processService.IdAdd(new Models.process
+                {
+                    UserId = userId,
+                    TaskId = task.Id,
+                    Describe = "授权审批",
+                    Status = dto.Status,
+                    CreateTime = DateTime.Now
+                });
+                task.CurrentProcess = processId;
+                task.Status = 2;
+
+                //审批通过则添加权限
+                if (dto.Status == 1)
+                {
+                    //var datamap = await _dataTableService.GetEntity<datamap>($"select Id from datamap d where d.Id in (select ds.AssociativeTable from dataservicetaskinfo ds join public_task pt on ds.Id=pt.InfoRelation where pt.Id={task.Id})");
+                    var datamap = await _dataServiceJoinService.GetDatamap(task.Id);
+                    var authorityId = await _authoriyService.IdAdd(new authority
+                    {
+                        Type = (await _orgService.GetEntity(m => m.Title == applicantUser.real_name)) == null ? 1 : 2,
+                        RelevanceId = table.Applicant,
+                        AssociativeTable = datamap.Id,
+                        Role = dto.Role,
+                        StartTime = task.StartTime.Value,
+                        EndTime = task.EndTime.Value
+                    });
+
+                    table.AuthorityId = authorityId;
+                }
+
+                table.Status = dto.Status;
+                table.Approvers = userId;
+
+                await _publicTaskService.UpdateColumn(task, m => new { m.CurrentProcess, m.Status });
+                await _serviceApplicationTaskInfoService.UpdateColumn(table, m => new { m.Status, m.Approvers, m.AuthorityId });
+
+
+            }
+
+            //await Logger.AddPlatformLog("数据服务授权", LogType.DataApproval);
+
+            return new AjaxResult<string>($"授权成功{(tIdError.Count > 0 ? $" Id: {string.Join(",", tIdError.ToArray())} 授权失败" : "")}");
+        }
+
+
+        /// <summary>
+        /// 计算日期之间的天数
+        /// </summary>
+        /// <param name="date1"></param>
+        /// <param name="date2"></param>
+        /// <returns></returns>
+        double GetDay(DateTime? date1, DateTime? date2)
+        {
+            var ts = date2 - date1;
+            var res = ts == null ? 0 : ts.Value.TotalDays;
+            return Math.Round(res);
+        }
+
+        /// <summary>
+        /// 获取登入用户的Id
+        /// </summary>
+        /// <returns></returns>
+        int? GetUserId()
+        {
+            var userId = HttpContext.User.Claims.Where(m => m.Type == "nameid").FirstOrDefault()?.Value.ToInt32();
+            return userId;
+        }
+
+
+        /// <summary>
+        /// 获取服务目录
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<PageResult<List<ResultServiceDirectoryDto>>> GetServiceDirectory(GetServiceDto dto)
+        {
+            string sql = "select t1.`id`,t1.`name`,t1.`guid`,attr.`attribution`,t3.`Name` layeredTypeName,t4.`name` dataSafeType,t1.`describe`,t1.`createTime`,t1.`updatetime`,t1.`Traffic`,t1.`applicationNum`,t2.`name` frequencyName,t1.`associativeTable`  , case when  (SELECT count(*)>0 from datamap_child dmc where  dmc.ParentId=t1.id ) then   '已拆分' else null end  SplitStr , case when  (SELECT count(*)>0 from datamap dm where  dm.mapchild=t1.id ) then   '已映射' else null end MappingStr ,dm.`Name` MappingName,t1.IsDataService from (select * from datamap where IsMapping is null and( id in  ( select DISTINCT ParentId from datamap_child  ) or id in ( select mapchild from datamap where IsMapping is not null  )) union select * from datamap where IsMapping is not NULL  or IsDataService ) t1 left join `frequency` t2 on t1.Frequency = t2.ID left join `layered` t3 on t1.`layeredType` = t3.`id` left join `modified` t4 on t1.`modifierType` = t4.`id` left join `attribution` attr on t1.`attribution` = attr.Id left join datamap dm on dm.id=t1.mapchild left join cloud_user cu on t1.userid=cu.Id  where t1.`Status`=1";
+
+            //源表目录条件筛选
+            if (dto.DataSourceUnitId.HasValue) sql += $" and t1.`attribution` = {dto.DataSourceUnitId.Value}";
+            if (dto.LayeredCategoryId.HasValue) sql += $" and t1.`layeredType` = {dto.LayeredCategoryId.Value}";
+            if (dto.DepartmentId.HasValue) sql += $" and cu.`description` = {dto.DepartmentId.Value}";
+            if (dto.UpdateId.HasValue) sql += $" and t1.`frequency` = {dto.UpdateId.Value}";
+            if (!string.IsNullOrEmpty(dto.KeyWord)) sql += $" and t1.`name` like '%{dto.KeyWord}%'";
+
+            sql += " order by t1.id desc ";
+            RefAsync<int> total = 0;
+            var result = await _dataTableService.GetEntityPageList<ResultServiceDirectoryDto>(sql, dto.PageIndex, dto.PageSize, total);
+            //await Logger.AddPlatformLog("数据服务-获取服务目录", LogType.DataAccess);
+            return new PageResult<List<ResultServiceDirectoryDto>>(result, total);
+        }
+
+
+        /// <summary>
+        /// 撤销转服务
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<AjaxResult<string>> CancelTransferService(CancelTransferServiceDto dto)
+        {
+            var datamapentity = await _dataMapService.GetEntity(i => i.Id == dto.DataId);
+            if (datamapentity == null) return new AjaxResult<string>(false, "数据错误");
+            var result = await _dataMapService.UpdateColumn(new datamap { Id = dto.DataId, IsDataService = null }, i => new { i.IsDataService });
+            //await Logger.AddPlatformLog("数据服务-撤销转服务", LogType.DataOperation);
+            return new AjaxResult<string>(result > 0);
+        }
+
+
+        /// <summary>
+        /// 加入申请车(new)
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<AjaxResult<string>> JoinApplyCar(JoinApplyCarDto dto)
+        {
+            if (dto.DataId == null || dto.DataId.Count <= 0) return new AjaxResult<string>(false, "数据出现错误！");
+            var result = await await Task.Factory.StartNew(async () =>
+            {
+                bool isExists = false;
+                foreach (var item in dto.DataId)
+                {
+                    //添加关联表数据
+                    var resultid = await _dataServiceTaskInfoService.IdAdd(new dataservicetaskinfo { UserId = dto.UserId, Department = dto.Department, AssociativeTable = item, CreateTime = DateTime.Now });
+                    //创建任务
+                    var resulttaskid = await _publicTaskService.IdAdd(new public_task { InfoRelation = resultid, Status = 0, TaskType = 3 });
+                    //添加流程
+                    var resultprocessid = await _processService.IdAdd(new process { TaskId = resulttaskid, UserId = dto.UserId, Status = 1, Describe = "添加申请车", CreateTime = DateTime.Now });
+                    isExists = (await _publicTaskService.UpdateColumn(new public_task { Id = resulttaskid, CurrentProcess = resultprocessid }, i => new { i.CurrentProcess })) > 0;
+                }
+                return isExists;
+            });
+            //await Logger.AddPlatformLog("数据服务-加入申请车", LogType.DataOperation);
+            return new AjaxResult<string>(result);
+        }
+
+        /// <summary>
+        /// 删除申请车申请 [2022年09月16 14:22:30]
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<AjaxResult<string>> DeleteApplyCar(DeleteApplyCarDto dto)
+        {
+            if (dto.Id == 0)
+            {
+                return new AjaxResult<string>("传入参数有误");
+            }
+            var task = await _publicTaskService.GetEntity(m => m.Id == dto.Id);
+            if (task == null)
+            {
+                return new AjaxResult<string>("申请任务不存在");
+            }
+
+            //删除任务对应的流程
+            await _processService.Delete(m => m.TaskId == task.Id);
+            //删除任务关联的申请车数据
+            await _dataServiceTaskInfoService.Delete(m => m.Id == task.InfoRelation);
+            //删除任务
+            await _publicTaskService.Delete(task);
+            //await Logger.AddPlatformLog("删除申请车申请", LogType.DataOperation);
+            return new AjaxResult<string>("删除申请车申请成功");
+        }
+    }
+}

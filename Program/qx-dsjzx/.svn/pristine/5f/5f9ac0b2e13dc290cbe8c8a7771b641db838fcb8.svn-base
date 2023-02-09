@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace ProgramsNetCore.Models.Dto.RepairOrderDto
+{
+    /// <summary>
+    ///     工单详情返回类
+    /// </summary>
+    public class ReturnOrderDetailsDto
+    {
+        /// <summary>
+        /// 开始时间
+        /// </summary>
+        public DateTime StartTime { get; set; }
+        /// <summary>
+        /// 结束时间
+        /// </summary>
+        public DateTime EndTime { get; set; }
+        /// <summary>
+        /// 内容
+        /// </summary>
+        public string Content { get; set; }
+        /// <summary>
+        /// 流程信息
+        /// </summary>
+        public List<ReturnProcessInfoDto> Child { get; set; }
+    }
+}
